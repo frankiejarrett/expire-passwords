@@ -68,7 +68,23 @@ add_action( 'password_reset', 'expass_new_password_set', 10, 1 );
  * @return int
  */
 function expass_get_password_expiration_limit() {
-	return absint( 30 );
+	$option  = get_option( 'expass_settings' );
+	$default = apply_filters( 'expass_default_password_expiration_limit', 30 );
+	$limit   = empty( $option['limit'] ) ? $default : $option['limit'];
+
+	return absint( $limit );
+}
+
+/**
+ *
+ *
+ * @return array
+ */
+function expass_get_password_expiration_roles() {
+	$option = get_option( 'expass_settings' );
+	$roles  = empty( $option['roles'] ) ? array() : array_keys( $option['roles'] );
+
+	return (array) $roles;
 }
 
 /**
@@ -82,7 +98,7 @@ function expass_get_password_expiration_limit() {
 function expass_get_password_expiration( $user_id, $date_format = 'U' ) {
 	$set = get_user_meta( $user_id, EXPIRE_PASSWORDS_META_KEY, true );
 
-	if ( empty( $set ) ) {
+	if ( ! expass_user_has_expirable_role( $user_id ) || empty( $set ) ) {
 		return;
 	}
 
@@ -100,6 +116,10 @@ function expass_get_password_expiration( $user_id, $date_format = 'U' ) {
  * @return bool
  */
 function expass_is_password_expired( $user_id ) {
+	if ( ! expass_user_has_expirable_role( $user_id ) ) {
+		return false;
+	}
+
 	$expires = expass_get_password_expiration();
 
 	if ( ! $expires ) {
@@ -107,6 +127,20 @@ function expass_is_password_expired( $user_id ) {
 	}
 
 	return ( $expires > time() );
+}
+
+/**
+ *
+ *
+ * @param int $user_id
+ *
+ * @return bool
+ */
+function expass_user_has_expirable_role( $user_id ) {
+	$user    = get_userdata( $user_id );
+	$compare = array_intersect( $user->roles, expass_get_password_expiration_roles() );
+
+	return ! empty( $compare );
 }
 
 /**
@@ -157,29 +191,29 @@ add_action( 'admin_menu', 'expass_add_admin_menu' );
 
 
 function expass_settings_init() {
-	register_setting( 'pluginPage', 'expass_settings' );
+	register_setting( 'expass_settings_page', 'expass_settings' );
 
 	add_settings_section(
-		'expass_pluginPage_section',
+		'expass_expass_settings_page_section',
 		null,
 		'expass_settings_section_callback',
-		'pluginPage'
+		'expass_settings_page'
 	);
 
 	add_settings_field(
 		'expass_password_expiration_limit',
 		esc_html__( 'Require password reset every', 'expire-passwords' ),
 		'expass_password_expiration_limit_render',
-		'pluginPage',
-		'expass_pluginPage_section'
+		'expass_settings_page',
+		'expass_expass_settings_page_section'
 	);
 
 	add_settings_field(
 		'expass_checkbox_roles',
 		esc_html__( 'For users in these roles', 'expire-passwords' ),
 		'expass_checkbox_roles_render',
-		'pluginPage',
-		'expass_pluginPage_section'
+		'expass_settings_page',
+		'expass_expass_settings_page_section'
 	);
 }
 add_action( 'admin_init', 'expass_settings_init' );
@@ -187,9 +221,9 @@ add_action( 'admin_init', 'expass_settings_init' );
 
 function expass_password_expiration_limit_render() {
 	$options = get_option( 'expass_settings' );
-	$name    = 'expass_password_expiration_limit';
+	$value   = isset( $options['limit'] ) ? $options['limit'] : null;
 	?>
-	<input type="number" min="1"  max="365" maxlength="3" name="expass_settings[<?php echo esc_attr( $name ) ?>]" placeholder="30" value="<?php echo esc_attr( $options[ $name ] ) ?>" required>
+	<input type="number" min="1" max="365" maxlength="3" name="expass_settings[limit]" placeholder="30" value="<?php echo esc_attr( $value ) ?>">
 	<?php
 	esc_html_e( 'days', 'expire-passwords' );
 }
@@ -197,20 +231,19 @@ function expass_password_expiration_limit_render() {
 
 function expass_checkbox_roles_render() {
 	$options = get_option( 'expass_settings' );
-	$name    = 'expass_checkbox_roles';
 	$roles   = get_editable_roles();
 
-	foreach ( $roles as $role => $_role ) :
-		$id = sprintf( '%s_%s', sanitize_key( $name ), sanitize_key( $role ) );
+	foreach ( $roles as $role => $role_data ) :
+		$name  = sanitize_key( $role );
+		$value = empty( $options['roles'][ $name ] ) ? 0 : 1;
 		?>
 		<p>
-			<input type="checkbox" name="expass_settings[<?php echo esc_attr( $name ) ?>]" id="<?php echo esc_attr( $id ) ?>" <?php checked( $options[ $id ], 1 ) ?> value="1">
-			<label for="<?php echo esc_attr( $id ) ?>"><?php echo esc_html( $_role['name'] ) ?></label>
+			<input type="checkbox" name="expass_settings[roles][<?php echo esc_attr( $name ) ?>]" id="expass_settings[roles][<?php echo esc_attr( $name ) ?>]" <?php checked( $value, 1 ) ?> value="1">
+			<label for="expass_settings[roles][<?php echo esc_attr( $name ) ?>]"><?php echo esc_html( $role_data['name'] ) ?></label>
 		</p>
 		<?php
 	endforeach;
 }
-
 
 
 function expass_settings_section_callback() {
@@ -230,9 +263,9 @@ function expass_options_page() {
 
 		<form action='options.php' method='post'>
 
-			<?php settings_fields( 'pluginPage' ) ?>
+			<?php settings_fields( 'expass_settings_page' ) ?>
 
-			<?php do_settings_sections( 'pluginPage' ) ?>
+			<?php do_settings_sections( 'expass_settings_page' ) ?>
 
 			<?php submit_button() ?>
 
