@@ -55,9 +55,9 @@ function expass_i18n_strings() {
  * @return void
  */
 function expass_save_password_set_user_meta( $user = null ) {
-	$user_id = is_int( $user ) ? $user : isset( $user->ID ) ? $user->ID : get_current_user_id();
+	$user_id = is_null( $user ) ? get_current_user_id() : isset( $user->ID ) ? $user->ID : absint( $user );
 
-	if ( ! $user_id ) {
+	if ( empty( $user_id ) ) {
 		return;
 	}
 
@@ -103,7 +103,7 @@ function expass_get_password_expiration( $user_id = null, $date_format = 'U' ) {
 	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 	$set     = get_user_meta( $user_id, EXPIRE_PASSWORDS_META_KEY, true );
 
-	if ( ! $user_id || ! expass_user_has_expirable_role( $user_id ) || empty( $set ) ) {
+	if ( empty( $user_id ) || ! expass_user_has_expirable_role( $user_id ) || empty( $set ) ) {
 		return;
 	}
 
@@ -123,7 +123,7 @@ function expass_get_password_expiration( $user_id = null, $date_format = 'U' ) {
 function expass_is_password_expired( $user_id = null ) {
 	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 
-	if ( ! $user_id || ! expass_user_has_expirable_role( $user_id ) ) {
+	if ( empty( $user_id ) || ! expass_user_has_expirable_role( $user_id ) ) {
 		return false;
 	}
 
@@ -147,7 +147,7 @@ function expass_user_has_expirable_role( $user_id = null ) {
 	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 	$user    = get_userdata( $user_id );
 
-	if ( ! $user ) {
+	if ( empty( $user_id ) ) {
 		return false;
 	}
 
