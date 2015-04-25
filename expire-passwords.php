@@ -192,7 +192,7 @@ function expass_custom_user_columns_content( $value, $column_name, $user_id ) {
 		} elseif ( $date > time() ) {
 			$value = sprintf( esc_html__( 'in %1$s', 'expire-passwords' ), human_time_diff( time(), $date ) );
 		} elseif ( time() > $date ) {
-			$value = '<span class="expass-expired">' . sprintf( esc_html__( '%1$s ago', 'expire-passwords' ), human_time_diff( $date, time() ) ) . '</span>';
+			$value = '<span class="expass-is-expired">' . sprintf( esc_html__( '%1$s ago', 'expire-passwords' ), human_time_diff( $date, time() ) ) . '</span>';
 		}
 	}
 
@@ -213,7 +213,7 @@ add_action( 'manage_users_custom_column', 'expass_custom_user_columns_content', 
 function expass_custom_user_row_action( $actions, $user ) {
 	$show_link = apply_filters( 'expass_show_expire_password_link', true, $user );
 
-	if ( ! $show_link ) {
+	if ( expass_is_password_expired( $user->ID ) || ! $show_link ) {
 		return $actions;
 	}
 
@@ -226,7 +226,7 @@ function expass_custom_user_row_action( $actions, $user ) {
 	);
 
 	$actions['expass'] = sprintf(
-		'<a href="%s">%s</a>',
+		'<a href="%s" class="expass-expire-password-link">%s</a>',
 		esc_url( $link ),
 		esc_html__( 'Expire Password', 'expire-passwords' )
 	);
@@ -234,6 +234,41 @@ function expass_custom_user_row_action( $actions, $user ) {
 	return $actions;
 }
 add_filter( 'user_row_actions', 'expass_custom_user_row_action', 10, 2 );
+
+/**
+ *
+ *
+ * @action admin_head
+ *
+ * @return void
+ */
+function expass_admin_head() {
+	$screen = get_current_screen();
+
+	if ( ! isset( $screen->id ) || 'users' !== $screen->id ) {
+		return;
+	}
+	?>
+	<style type="text/css">
+		.fixed .column-expass {
+			width: 150px;
+		}
+		@media screen and (max-width: 782px) {
+			.fixed .column-expass {
+				display: none;
+			}
+		}
+		.expass-expire-password-link,
+		.expass-is-expired {
+			color: #a00;
+		}
+		.expass-expire-password-link:hover {
+			color: #f00;
+		}
+	</style>
+	<?php
+}
+add_action( 'admin_head', 'expass_admin_head' );
 
 /**
  *
