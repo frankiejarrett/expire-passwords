@@ -127,13 +127,13 @@ function expass_is_password_expired( $user_id = null ) {
 		return false;
 	}
 
-	$expires = expass_get_password_expiration();
+	$expires = expass_get_password_expiration( $user_id );
 
 	if ( ! $expires ) {
 		return false;
 	}
 
-	return ( $expires > time() );
+	return ( time() > $expires );
 }
 
 /**
@@ -166,7 +166,7 @@ function expass_user_has_expirable_role( $user_id = null ) {
  * @return array
  */
 function expass_custom_user_columns( $columns ) {
-	$columns['expass'] = 'Password Expires';
+	$columns['expass'] = 'Password Expiration';
 
 	return $columns;
 }
@@ -186,7 +186,14 @@ add_filter( 'manage_users_columns', 'expass_custom_user_columns', 10, 1 );
 function expass_custom_user_columns_content( $value, $column_name, $user_id ) {
 	if ( 'expass' === $column_name ) {
 		$date  = expass_get_password_expiration( $user_id );
-		$value = empty( $date ) ? esc_html__( 'Never', 'expire-passwords' ) : sprintf( esc_html__( 'in %1$s', 'expire-passwords' ), human_time_diff( time(), $date ) );
+
+		if ( empty( $date ) ) {
+			$value = esc_html__( 'Never', 'expire-passwords' );
+		} elseif ( $date > time() ) {
+			$value = sprintf( esc_html__( 'in %1$s', 'expire-passwords' ), human_time_diff( time(), $date ) );
+		} elseif ( time() > $date ) {
+			$value = '<span class="expass-expired">' . sprintf( esc_html__( '%1$s ago', 'expire-passwords' ), human_time_diff( $date, time() ) ) . '</span>';
+		}
 	}
 
 	return $value;
