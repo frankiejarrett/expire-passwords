@@ -50,17 +50,21 @@ function expass_i18n_strings() {
  * @action password_reset
  * @action user_register
  *
- * @param int|WP_User $user
+ * @param int|WP_User $user (optional)
  *
  * @return void
  */
-function expass_new_password_set( $user ) {
-	$user_id = is_int( $user ) ? $user : $user->ID;
+function expass_save_password_set_user_meta( $user = null ) {
+	$user_id = is_int( $user ) ? $user : isset( $user->ID ) ? $user->ID : get_current_user_id();
+
+	if ( ! $user_id ) {
+		return;
+	}
 
 	update_user_meta( $user_id, EXPIRE_PASSWORDS_META_KEY, current_time( 'mysql', 1 ) );
 }
-add_action( 'user_register', 'expass_new_password_set', 10, 1 );
-add_action( 'password_reset', 'expass_new_password_set', 10, 1 );
+add_action( 'user_register', 'expass_save_password_set_user_meta', 10, 1 );
+add_action( 'password_reset', 'expass_save_password_set_user_meta', 10, 1 );
 
 /**
  *
@@ -99,7 +103,7 @@ function expass_get_password_expiration( $user_id = null, $date_format = 'U' ) {
 	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 	$set     = get_user_meta( $user_id, EXPIRE_PASSWORDS_META_KEY, true );
 
-	if ( ! expass_user_has_expirable_role( $user_id ) || empty( $set ) ) {
+	if ( ! $user_id || ! expass_user_has_expirable_role( $user_id ) || empty( $set ) ) {
 		return;
 	}
 
@@ -119,7 +123,7 @@ function expass_get_password_expiration( $user_id = null, $date_format = 'U' ) {
 function expass_is_password_expired( $user_id = null ) {
 	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 
-	if ( ! expass_user_has_expirable_role( $user_id ) ) {
+	if ( ! $user_id || ! expass_user_has_expirable_role( $user_id ) ) {
 		return false;
 	}
 
@@ -142,6 +146,11 @@ function expass_is_password_expired( $user_id = null ) {
 function expass_user_has_expirable_role( $user_id = null ) {
 	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 	$user    = get_userdata( $user_id );
+
+	if ( ! $user ) {
+		return false;
+	}
+
 	$compare = array_intersect( $user->roles, expass_get_password_expiration_roles() );
 
 	return ! empty( $compare );
@@ -253,18 +262,27 @@ add_filter( 'login_message', 'expass_login_message' );
 /**
  *
  *
- * @action admin_init
+ * @action wp_login
+ *
+ * @param string  $user_login
+ * @param WP_User $user
  *
  * @return void
  */
-function expass_enforce_password_reset() {
-	if ( ! expass_is_password_expired() ) {
+function expass_enforce_password_reset( $user_login, $user ) {
+	$set = get_user_meta( $user->ID, EXPIRE_PASSWORDS_META_KEY, true );
+
+	if ( empty( $set ) ) {
+		expass_save_password_set_user_meta( $user->ID );
+	}
+
+	if ( ! expass_is_password_expired( $user->ID ) ) {
 		return;
 	}
 
 	wp_destroy_all_sessions();
 
-	$url = add_query_arg(
+	$location = add_query_arg(
 		array(
 			'action' => 'lostpassword',
 			'expass' => 'expired',
@@ -272,11 +290,11 @@ function expass_enforce_password_reset() {
 		wp_login_url()
 	);
 
-	wp_safe_redirect( $url, 301 );
+	wp_safe_redirect( $location, 301 );
 
 	exit;
 }
-add_action( 'admin_init', 'expass_enforce_password_reset' );
+add_action( 'wp_login', 'expass_enforce_password_reset', 10, 2 );
 
 /**
  *
