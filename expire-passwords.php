@@ -90,13 +90,14 @@ function expass_get_password_expiration_roles() {
 /**
  *
  *
- * @param int    $user_id
- * @param string $date_format
+ * @param int    $user_id (optional)
+ * @param string $date_format (optional)
  *
- * @return
+ * @return string|null
  */
-function expass_get_password_expiration( $user_id, $date_format = 'U' ) {
-	$set = get_user_meta( $user_id, EXPIRE_PASSWORDS_META_KEY, true );
+function expass_get_password_expiration( $user_id = null, $date_format = 'U' ) {
+	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
+	$set     = get_user_meta( $user_id, EXPIRE_PASSWORDS_META_KEY, true );
 
 	if ( ! expass_user_has_expirable_role( $user_id ) || empty( $set ) ) {
 		return;
@@ -111,11 +112,13 @@ function expass_get_password_expiration( $user_id, $date_format = 'U' ) {
 /**
  *
  *
- * @param int $user_id
+ * @param int $user_id (optional)
  *
  * @return bool
  */
-function expass_is_password_expired( $user_id ) {
+function expass_is_password_expired( $user_id = null ) {
+	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
+
 	if ( ! expass_user_has_expirable_role( $user_id ) ) {
 		return false;
 	}
@@ -123,7 +126,7 @@ function expass_is_password_expired( $user_id ) {
 	$expires = expass_get_password_expiration();
 
 	if ( ! $expires ) {
-		return true;
+		return false;
 	}
 
 	return ( $expires > time() );
@@ -132,11 +135,12 @@ function expass_is_password_expired( $user_id ) {
 /**
  *
  *
- * @param int $user_id
+ * @param int $user_id (optional)
  *
  * @return bool
  */
-function expass_user_has_expirable_role( $user_id ) {
+function expass_user_has_expirable_role( $user_id = null ) {
+	$user_id = is_int( $user_id ) ? $user_id : get_current_user_id();
 	$user    = get_userdata( $user_id );
 	$compare = array_intersect( $user->roles, expass_get_password_expiration_roles() );
 
@@ -180,16 +184,119 @@ function expass_custom_user_columns_content( $value, $column_name, $user_id ) {
 }
 add_action( 'manage_users_custom_column', 'expass_custom_user_columns_content', 10, 3 );
 
+/**
+ *
+ *
+ * @filter user_row_actions
+ *
+ * @param array   $actions
+ * @param WP_User $user
+ *
+ * @return array
+ */
+function expass_custom_user_row_action( $actions, $user ) {
+	$show_link = apply_filters( 'expass_show_expire_password_link', true, $user );
 
+	if ( ! $show_link ) {
+		return $actions;
+	}
 
+	$link = add_query_arg(
+		array(
+			'action'   => 'expire_password',
+			'user_id'  => $user->ID,
+			'_wpnonce' => wp_create_nonce( sprintf( 'expire_password_nonce-%d', $user->ID ) ),
+		)
+	);
 
+	$actions['expass'] = sprintf(
+		'<a href="%s">%s</a>',
+		esc_url( $link ),
+		esc_html__( 'Expire Password', 'expire-passwords' )
+	);
 
+	return $actions;
+}
+add_filter( 'user_row_actions', 'expass_custom_user_row_action', 10, 2 );
+
+/**
+ *
+ *
+ * @filter login_message
+ *
+ * @param string $message
+ *
+ * @return string
+ */
+function expass_login_message( $message ) {
+	$action = isset( $_GET['action'] ) ? $_GET['action'] : null;
+	$expass = isset( $_GET['expass'] ) ? $_GET['expass'] : null;
+
+	if ( 'lostpassword' !== $action || 'expired' !== $expass ) {
+		return $message;
+	}
+
+	$limit   = expass_get_password_expiration_limit();
+	$message = sprintf(
+		'<p id="login_error">%s</p><br><p>%s</p>',
+		sprintf(
+			esc_html__( 'Your password must be reset every %d days.', 'expire-passwords' ),
+			$limit
+		),
+		esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'expire-passwords' )
+	);
+
+	return $message;
+}
+add_filter( 'login_message', 'expass_login_message' );
+
+/**
+ *
+ *
+ * @action admin_init
+ *
+ * @return void
+ */
+function expass_enforce_password_reset() {
+	if ( ! expass_is_password_expired() ) {
+		return;
+	}
+
+	wp_destroy_all_sessions();
+
+	$url = add_query_arg(
+		array(
+			'action' => 'lostpassword',
+			'expass' => 'expired',
+		),
+		wp_login_url()
+	);
+
+	wp_safe_redirect( $url, 301 );
+
+	exit;
+}
+add_action( 'admin_init', 'expass_enforce_password_reset' );
+
+/**
+ *
+ *
+ * @action admin_menu
+ *
+ * @return void
+ */
 function expass_add_admin_menu() {
 	add_submenu_page( 'users.php', esc_html__( 'Expire Passwords', 'expire-passwords' ), esc_html__( 'Expire Passwords', 'expire-passwords' ), 'manage_options', 'expire_passwords', 'expass_options_page' );
 }
 add_action( 'admin_menu', 'expass_add_admin_menu' );
 
-
+/**
+ *
+ *
+ * @action admin_init
+ *
+ * @return void
+ */
 function expass_settings_init() {
 	register_setting( 'expass_settings_page', 'expass_settings' );
 
@@ -218,7 +325,13 @@ function expass_settings_init() {
 }
 add_action( 'admin_init', 'expass_settings_init' );
 
-
+/**
+ *
+ *
+ * @see expass_settings_init()
+ *
+ * @return void
+ */
 function expass_password_expiration_limit_render() {
 	$options = get_option( 'expass_settings' );
 	$value   = isset( $options['limit'] ) ? $options['limit'] : null;
@@ -228,7 +341,13 @@ function expass_password_expiration_limit_render() {
 	esc_html_e( 'days', 'expire-passwords' );
 }
 
-
+/**
+ *
+ *
+ * @see expass_settings_init()
+ *
+ * @return void
+ */
 function expass_checkbox_roles_render() {
 	$options = get_option( 'expass_settings' );
 	$roles   = get_editable_roles();
@@ -245,7 +364,13 @@ function expass_checkbox_roles_render() {
 	endforeach;
 }
 
-
+/**
+ *
+ *
+ * @see expass_settings_init()
+ *
+ * @return void
+ */
 function expass_settings_section_callback() {
 	?>
 	<p>
@@ -254,14 +379,20 @@ function expass_settings_section_callback() {
 	<?php
 }
 
-
+/**
+ *
+ *
+ * @see expass_add_admin_menu()
+ *
+ * @return void
+ */
 function expass_options_page() {
 	?>
 	<div class="wrap">
 
 		<h2>Expire Passwords</h2>
 
-		<form action='options.php' method='post'>
+		<form method="post" action="options.php">
 
 			<?php settings_fields( 'expass_settings_page' ) ?>
 
