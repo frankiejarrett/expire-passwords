@@ -64,9 +64,9 @@ class Expire_Passwords {
 
 		add_action( 'plugins_loaded', array( __CLASS__, 'i18n' ) );
 
-		add_action( 'init', array( __CLASS__, 'load' ) );
-
 		add_action( 'wp_login', array( __CLASS__, 'enforce_password_reset' ), 10, 2 );
+
+		add_action( 'init', array( __CLASS__, 'load' ) );
 	}
 
 	/**
@@ -276,7 +276,7 @@ class Expire_Passwords {
 
 		$location = add_query_arg(
 			array(
-				'action'          => 'lostpassword',
+				'action'     => 'lostpassword',
 				self::PREFIX => 'expired',
 			),
 			wp_login_url()
@@ -329,7 +329,7 @@ class Expire_Passwords {
 	public static function save_user_meta( $user_id = null ) {
 		$user_id = is_int( $user_id ) ? $user_id : self::$user->ID;
 
-		update_user_meta( self::$user->ID, self::META_KEY, gmdate( 'U' ) );
+		update_user_meta( $user_id, self::META_KEY, gmdate( 'U' ) );
 	}
 
 	/**
