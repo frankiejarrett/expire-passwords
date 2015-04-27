@@ -7,7 +7,7 @@ Stable tag:        0.1.0
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Require certain users to change their passwords after a specified length of time.
+Require certain users to change their passwords on a regular basis.
 
 == Description ==
 

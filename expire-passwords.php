@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Expire Passwords
- * Description: Require certain users to change their passwords after a specified length of time.
+ * Description: Require certain users to change their passwords on a regular basis.
  * Version: 0.1.0
  * Author: Frankie Jarrett
  * Author URI: http://frankiejarrett.com
@@ -207,7 +207,7 @@ class Expire_Passwords {
 	public static function settings_section_render() {
 		?>
 		<p>
-			<?php esc_html_e( 'Require certain users to change their passwords after a specified length of time.', 'expire-passwords' ) ?>
+			<?php esc_html_e( 'Require certain users to change their passwords on a regular basis.', 'expire-passwords' ) ?>
 		</p>
 		<?php
 	}
