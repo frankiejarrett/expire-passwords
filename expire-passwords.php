@@ -241,7 +241,12 @@ class Expire_Passwords {
 
 		foreach ( $roles as $role => $role_data ) :
 			$name  = sanitize_key( $role );
-			$value = empty( $options['roles'][ $name ] ) ? 0 : 1;
+
+			if ( empty( $options ) ) {
+				$value = ( 'administrator' === $role ) ? 0 : 1;
+			} else {
+				$value = empty( $options['roles'][ $name ] ) ? 0 : 1;
+			}
 			?>
 			<p>
 				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', self::PREFIX, esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', self::PREFIX, esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
@@ -364,7 +369,16 @@ class Expire_Passwords {
 	 */
 	public static function get_roles() {
 		$options = get_option( self::PREFIX . '_settings' );
-		$roles   = empty( $options['roles'] ) ? array() : array_keys( $options['roles'] );
+
+		if ( empty( $options ) ) {
+			$roles = get_editable_roles();
+
+			if ( isset( $roles['administrator'] ) ) {
+				unset( $roles['administrator'] );
+			}
+		} else {
+			$roles = empty( $options['roles'] ) ? array() : array_keys( $options['roles'] );
+		}
 
 		return (array) $roles;
 	}
