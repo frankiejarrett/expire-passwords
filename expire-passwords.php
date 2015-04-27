@@ -19,18 +19,18 @@ class Expire_Passwords {
 	const VERSION = '0.1.0';
 
 	/**
-	 * User meta key identifier
-	 *
-	 * @const string
-	 */
-	const META_KEY = 'expass_password_reset';
-
-	/**
 	 * Generic prefix/key identifier
 	 *
 	 * @const string
 	 */
 	const PREFIX = 'expass';
+
+	/**
+	 * User meta key identifier
+	 *
+	 * @const string
+	 */
+	const META_KEY = 'expass_password_reset';
 
 	/**
 	 * Hold current user object
