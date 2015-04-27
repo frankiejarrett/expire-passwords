@@ -112,7 +112,6 @@ class Expire_Passwords {
 		add_action( 'admin_head', array( __CLASS__, 'custom_user_admin_css' ) );
 		add_filter( 'manage_users_columns', array( __CLASS__, 'custom_user_column' ) );
 		add_action( 'manage_users_custom_column', array( __CLASS__, 'custom_user_column_content' ), 10, 3 );
-		add_filter( 'user_row_actions', array( __CLASS__, 'custom_user_row_action' ), 10, 2 );
 	}
 
 	/**
@@ -262,6 +261,8 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function enforce_password_reset( $user_login, $user ) {
+		var_dump( self::$user ); die();
+
 		$reset = get_user_meta( $user->ID );
 
 		if ( ! $reset ) {
@@ -501,49 +502,6 @@ class Expire_Passwords {
 		}
 
 		return $value; // xss ok
-	}
-
-	/**
-	 *
-	 *
-	 * @filter user_row_actions
-	 *
-	 * @param array   $actions
-	 * @param WP_User $user
-	 *
-	 * @return array
-	 */
-	public static function custom_user_row_action( $actions, $user ) {
-		/**
-		 * Filter when the manual Expire Password action link should
-		 * be shown in the Users list table.
-		 *
-		 * @param WP_User $user
-		 *
-		 * @return bool
-		 */
-		$show_link = apply_filters( 'expass_show_expire_password_link', true, $user );
-
-		if ( ! $show_link || self::is_password_expired( $user->ID ) ) {
-			return $actions;
-		}
-
-		$link = add_query_arg(
-			array(
-				'action'   => 'expire_password',
-				'user_id'  => $user->ID,
-				'_wpnonce' => wp_create_nonce( sprintf( 'expire_password_nonce-%d', $user->ID ) ),
-			)
-		);
-
-		$actions[ self::PREFIX ] = sprintf(
-			'<a href="%s" class="%s-expire-password-link">%s</a>',
-			esc_url( $link ),
-			esc_attr( self::PREFIX ),
-			esc_html__( 'Expire Password', 'expire-passwords' )
-		);
-
-		return $actions;
 	}
 
 	/**
