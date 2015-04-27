@@ -6,7 +6,7 @@ php:
     - 5.5
 
 env:
-    - WP_VERSION=2.8 WP_MULTISITE=0
+    - WP_VERSION=2.7 WP_MULTISITE=0
     - WP_VERSION=latest WP_MULTISITE=0
 
 before_script:
