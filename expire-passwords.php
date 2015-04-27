@@ -40,11 +40,11 @@ class Expire_Passwords {
 	public static $user;
 
 	/**
-	 * Default limit for password age (in days)
+	 * Hold default limit for password age (in days)
 	 *
 	 * @var int
 	 */
-	public static $default_limit = 90;
+	public static $default_limit;
 
 	/**
 	 * Hold plugin instance
