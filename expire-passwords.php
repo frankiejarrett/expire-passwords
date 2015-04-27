@@ -317,7 +317,7 @@ class Expire_Passwords {
 	}
 
 	/**
- 	 *
+	 *
 	 *
 	 * @action password_reset
 	 * @action user_register
@@ -333,7 +333,7 @@ class Expire_Passwords {
 	}
 
 	/**
- 	 *
+	 *
 	 *
 	 * @param int $user_id
 	 *
