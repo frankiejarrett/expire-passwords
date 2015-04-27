@@ -116,7 +116,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Add custom submenu page under the Users menu
 	 *
 	 * @action admin_menu
 	 *
@@ -134,7 +134,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Content for the custom submenu page under the Users menu
 	 *
 	 * @see self::add_submenu_page()
 	 *
@@ -161,7 +161,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Register custom setting sections and fields
 	 *
 	 * @action admin_init
 	 *
@@ -198,7 +198,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Content for the custom settings section
 	 *
 	 * @see self::settings_init()
 	 *
@@ -213,7 +213,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Content for the limit setting field
 	 *
 	 * @see self::settings_init()
 	 *
@@ -229,7 +229,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Content for the roles setting field
 	 *
 	 * @see self::settings_init()
 	 *
@@ -257,7 +257,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Enforce password reset after user login, when applicable
 	 *
 	 * @action wp_login
 	 *
@@ -293,7 +293,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Display a custom message on the lost password login screen
 	 *
 	 * @filter login_message
 	 *
@@ -322,7 +322,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Save password reset user meta to the database
 	 *
 	 * @action password_reset
 	 * @action user_register
@@ -338,11 +338,11 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Return password reset user meta from the database
 	 *
 	 * @param int $user_id
 	 *
-	 * @return int|bool
+	 * @return int|bool  Unix timestamp on success, false on failure
 	 */
 	public static function get_user_meta( $user_id ) {
 		$value = get_user_meta( $user_id, self::META_KEY, true );
@@ -351,7 +351,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Return the password age limit setting
 	 *
 	 * @return int
 	 */
@@ -363,7 +363,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Return the array of expirable roles setting
 	 *
 	 * @return array
 	 */
@@ -384,7 +384,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Return the password expiration date for a user
 	 *
 	 * @param int    $user_id (optional)
 	 * @param string $date_format (optional)
@@ -405,7 +405,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Determine if a user belongs to an expirable role defined in the settings
 	 *
 	 * @param int $user_id (optional)
 	 *
@@ -419,7 +419,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Determine if a user's password has exceeded the age limit
 	 *
 	 * @param int $user_id (optional)
 	 *
@@ -442,7 +442,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Print custom CSS styles for the users.php screen
 	 *
 	 * @action admin_head
 	 *
@@ -472,7 +472,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Add a custom column to the Users list table
 	 *
 	 * @filter manage_users_columns
 	 *
@@ -487,7 +487,7 @@ class Expire_Passwords {
 	}
 
 	/**
-	 *
+	 * Add content to the custom column in the Users list table
 	 *
 	 * @action manage_users_custom_column
 	 *
