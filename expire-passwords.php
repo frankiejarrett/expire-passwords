@@ -65,6 +65,8 @@ class Expire_Passwords {
 		add_action( 'plugins_loaded', array( __CLASS__, 'i18n' ) );
 
 		add_action( 'init', array( __CLASS__, 'load' ) );
+
+		add_action( 'wp_login', array( __CLASS__, 'enforce_password_reset' ), 10, 2 );
 	}
 
 	/**
@@ -106,7 +108,6 @@ class Expire_Passwords {
 		add_action( 'user_register', array( __CLASS__, 'save_user_meta' ) );
 		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 
-		add_action( 'wp_login', array( __CLASS__, 'enforce_password_reset' ), 10, 2 );
 		add_filter( 'login_message', array( __CLASS__, 'custom_login_message' ) );
 
 		add_action( 'admin_head', array( __CLASS__, 'custom_user_admin_css' ) );
@@ -261,9 +262,7 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function enforce_password_reset( $user_login, $user ) {
-		var_dump( self::$user ); die();
-
-		$reset = get_user_meta( $user->ID );
+		$reset = self::get_user_meta( $user->ID );
 
 		if ( ! $reset ) {
 			self::save_user_meta( $user->ID );
