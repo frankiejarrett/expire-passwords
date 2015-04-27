@@ -148,9 +148,9 @@ class Expire_Passwords {
 
 			<form method="post" action="options.php">
 
-				<?php settings_fields( sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ) ) ?>
+				<?php settings_fields( self::GENERIC_KEY . '_settings_page' ) ?>
 
-				<?php do_settings_sections( sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ) ) ?>
+				<?php do_settings_sections( self::GENERIC_KEY . '_settings_page' ) ?>
 
 				<?php submit_button() ?>
 
@@ -169,31 +169,31 @@ class Expire_Passwords {
 	 */
 	public static function settings_init() {
 		register_setting(
-			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ),
-			sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) )
+			self::GENERIC_KEY . '_settings_page',
+			self::GENERIC_KEY . '_settings'
 		);
 
 		add_settings_section(
-			sprintf( '%s_settings_page_section', sanitize_key( self::GENERIC_KEY ) ),
+			self::GENERIC_KEY . '_settings_page_section',
 			null,
 			array( __CLASS__, 'settings_section_render' ),
-			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) )
+			self::GENERIC_KEY . '_settings_page'
 		);
 
 		add_settings_field(
-			sprintf( '%s_settings_field_limit', sanitize_key( self::GENERIC_KEY ) ),
+			self::GENERIC_KEY . '_settings_field_limit',
 			esc_html__( 'Require password reset every', 'expire-passwords' ),
 			array( __CLASS__, 'settings_field_limit_render' ),
-			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ),
-			sprintf( '%s_settings_page_section', sanitize_key( self::GENERIC_KEY ) )
+			self::GENERIC_KEY . '_settings_page',
+			self::GENERIC_KEY . '_settings_page_section'
 		);
 
 		add_settings_field(
-			sprintf( '%s_settings_field_roles', sanitize_key( self::GENERIC_KEY ) ),
+			self::GENERIC_KEY . '_settings_field_roles',
 			esc_html__( 'For users in these roles', 'expire-passwords' ),
 			array( __CLASS__, 'settings_field_roles_render' ),
-			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ),
-			sprintf( '%s_settings_page_section', sanitize_key( self::GENERIC_KEY ) )
+			self::GENERIC_KEY . '_settings_page',
+			self::GENERIC_KEY . '_settings_page_section'
 		);
 	}
 
@@ -220,10 +220,10 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function settings_field_limit_render() {
-		$options = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
+		$options = get_option( self::GENERIC_KEY . '_settings' );
 		$value   = isset( $options['limit'] ) ? $options['limit'] : null;
 		?>
-		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', sanitize_key( self::GENERIC_KEY ) ) ?>" placeholder="<?php echo esc_attr( self::$default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
+		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', self::GENERIC_KEY ) ?>" placeholder="<?php echo esc_attr( self::$default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
 		<?php
 		esc_html_e( 'days', 'expire-passwords' );
 	}
@@ -236,7 +236,7 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function settings_field_roles_render() {
-		$options = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
+		$options = get_option( self::GENERIC_KEY . '_settings' );
 		$roles   = get_editable_roles();
 
 		foreach ( $roles as $role => $role_data ) :
@@ -244,8 +244,8 @@ class Expire_Passwords {
 			$value = empty( $options['roles'][ $name ] ) ? 0 : 1;
 			?>
 			<p>
-				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', sanitize_key( self::GENERIC_KEY ), esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', sanitize_key( self::GENERIC_KEY ), esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
-				<label for="<?php printf( '%s_settings[roles][%s]', sanitize_key( self::GENERIC_KEY ), esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
+				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', self::GENERIC_KEY, esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', self::GENERIC_KEY, esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
+				<label for="<?php printf( '%s_settings[roles][%s]', self::GENERIC_KEY, esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
 			</p>
 			<?php
 		endforeach;
@@ -351,8 +351,8 @@ class Expire_Passwords {
 	 * @return int
 	 */
 	public static function get_limit() {
-		$option = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
-		$limit  = empty( $option['limit'] ) ? self::$default_limit : $option['limit'];
+		$options = get_option( self::GENERIC_KEY . '_settings' );
+		$limit   = empty( $options['limit'] ) ? self::$default_limit : $options['limit'];
 
 		return absint( $limit );
 	}
@@ -363,8 +363,8 @@ class Expire_Passwords {
 	 * @return array
 	 */
 	public static function get_roles() {
-		$option = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
-		$roles  = empty( $option['roles'] ) ? array() : array_keys( $option['roles'] );
+		$options = get_option( self::GENERIC_KEY . '_settings' );
+		$roles   = empty( $options['roles'] ) ? array() : array_keys( $options['roles'] );
 
 		return (array) $roles;
 	}
@@ -493,9 +493,9 @@ class Expire_Passwords {
 				$time_diff = sprintf( __( '%1$s ago', 'expire-passwords' ), human_time_diff( $reset, time() ) );
 
 				if ( self::is_password_expired( $user_id ) ) {
-					$value = sprintf( '<span class="%s-is-expired">%s</span>', esc_html( self::GENERIC_KEY ), esc_html( $time_diff ) );
+					$value = sprintf( '<span class="%s-is-expired">%s</span>', esc_attr( self::GENERIC_KEY ), esc_html( $time_diff ) );
 				} else {
-					$value = sprintf( '<span class="%s-not-expired">%s</span>', esc_html( self::GENERIC_KEY ), esc_html( $time_diff ) );
+					$value = sprintf( '<span class="%s-not-expired">%s</span>', esc_attr( self::GENERIC_KEY ), esc_html( $time_diff ) );
 				}
 			}
 		}
@@ -539,7 +539,7 @@ class Expire_Passwords {
 		$actions[ self::GENERIC_KEY ] = sprintf(
 			'<a href="%s" class="%s-expire-password-link">%s</a>',
 			esc_url( $link ),
-			esc_html( self::GENERIC_KEY ),
+			esc_attr( self::GENERIC_KEY ),
 			esc_html__( 'Expire Password', 'expire-passwords' )
 		);
 
