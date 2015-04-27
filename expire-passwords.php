@@ -92,7 +92,13 @@ class Expire_Passwords {
 
 		self::$user = wp_get_current_user();
 
-		self::$default_limit = apply_filters( 'expass_default_password_expiration_limit', 90 );
+		/**
+		 * Filter the default age limit for passwords (in days)
+		 * when the limit settings field is not set or empty.
+		 *
+		 * @return int
+		 */
+		self::$default_limit = apply_filters( 'expass_default_limit', 90 );
 
 		add_action( 'admin_menu', array( __CLASS__, 'add_submenu_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'settings_init' ) );
@@ -142,9 +148,9 @@ class Expire_Passwords {
 
 			<form method="post" action="options.php">
 
-				<?php settings_fields( 'expass_settings_page' ) ?>
+				<?php settings_fields( sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ) ) ?>
 
-				<?php do_settings_sections( 'expass_settings_page' ) ?>
+				<?php do_settings_sections( sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ) ) ?>
 
 				<?php submit_button() ?>
 
@@ -162,29 +168,32 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function settings_init() {
-		register_setting( 'expass_settings_page', 'expass_settings' );
+		register_setting(
+			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ),
+			sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) )
+		);
 
 		add_settings_section(
-			'expass_expass_settings_page_section',
+			sprintf( '%s_settings_page_section', sanitize_key( self::GENERIC_KEY ) ),
 			null,
 			array( __CLASS__, 'settings_section_render' ),
-			'expass_settings_page'
+			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) )
 		);
 
 		add_settings_field(
-			'expass_password_expiration_limit',
+			sprintf( '%s_settings_field_limit', sanitize_key( self::GENERIC_KEY ) ),
 			esc_html__( 'Require password reset every', 'expire-passwords' ),
 			array( __CLASS__, 'settings_field_limit_render' ),
-			'expass_settings_page',
-			'expass_expass_settings_page_section'
+			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ),
+			sprintf( '%s_settings_page_section', sanitize_key( self::GENERIC_KEY ) )
 		);
 
 		add_settings_field(
-			'expass_checkbox_roles',
+			sprintf( '%s_settings_field_roles', sanitize_key( self::GENERIC_KEY ) ),
 			esc_html__( 'For users in these roles', 'expire-passwords' ),
 			array( __CLASS__, 'settings_field_roles_render' ),
-			'expass_settings_page',
-			'expass_expass_settings_page_section'
+			sprintf( '%s_settings_page', sanitize_key( self::GENERIC_KEY ) ),
+			sprintf( '%s_settings_page_section', sanitize_key( self::GENERIC_KEY ) )
 		);
 	}
 
@@ -211,10 +220,10 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function settings_field_limit_render() {
-		$options = get_option( 'expass_settings' );
+		$options = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
 		$value   = isset( $options['limit'] ) ? $options['limit'] : null;
 		?>
-		<input type="number" min="1" max="365" maxlength="3" name="expass_settings[limit]" placeholder="<?php echo esc_attr( self::$default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
+		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', sanitize_key( self::GENERIC_KEY ) ) ?>" placeholder="<?php echo esc_attr( self::$default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
 		<?php
 		esc_html_e( 'days', 'expire-passwords' );
 	}
@@ -227,7 +236,7 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function settings_field_roles_render() {
-		$options = get_option( 'expass_settings' );
+		$options = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
 		$roles   = get_editable_roles();
 
 		foreach ( $roles as $role => $role_data ) :
@@ -235,8 +244,8 @@ class Expire_Passwords {
 			$value = empty( $options['roles'][ $name ] ) ? 0 : 1;
 			?>
 			<p>
-				<input type="checkbox" name="expass_settings[roles][<?php echo esc_attr( $name ) ?>]" id="expass_settings[roles][<?php echo esc_attr( $name ) ?>]" <?php checked( $value, 1 ) ?> value="1">
-				<label for="expass_settings[roles][<?php echo esc_attr( $name ) ?>]"><?php echo esc_html( $role_data['name'] ) ?></label>
+				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', sanitize_key( self::GENERIC_KEY ), esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', sanitize_key( self::GENERIC_KEY ), esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
+				<label for="<?php printf( '%s_settings[roles][%s]', sanitize_key( self::GENERIC_KEY ), esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
 			</p>
 			<?php
 		endforeach;
@@ -342,7 +351,7 @@ class Expire_Passwords {
 	 * @return int
 	 */
 	public static function get_limit() {
-		$option = get_option( 'expass_settings' );
+		$option = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
 		$limit  = empty( $option['limit'] ) ? self::$default_limit : $option['limit'];
 
 		return absint( $limit );
@@ -354,7 +363,7 @@ class Expire_Passwords {
 	 * @return array
 	 */
 	public static function get_roles() {
-		$option = get_option( 'expass_settings' );
+		$option = get_option( sprintf( '%s_settings', sanitize_key( self::GENERIC_KEY ) ) );
 		$roles  = empty( $option['roles'] ) ? array() : array_keys( $option['roles'] );
 
 		return (array) $roles;
@@ -433,15 +442,15 @@ class Expire_Passwords {
 		}
 		?>
 		<style type="text/css">
-			.fixed .column-expass {
+			.fixed .column-<?php echo esc_html( self::GENERIC_KEY ) ?> {
 				width: 150px;
 			}
 			@media screen and (max-width: 782px) {
-				.fixed .column-expass {
+				.fixed .column-<?php echo esc_html( self::GENERIC_KEY ) ?> {
 					display: none;
 				}
 			}
-			.expass-is-expired {
+			.<?php echo esc_html( self::GENERIC_KEY ) ?>-is-expired {
 				color: #a00;
 			}
 		</style>
@@ -484,9 +493,9 @@ class Expire_Passwords {
 				$time_diff = sprintf( __( '%1$s ago', 'expire-passwords' ), human_time_diff( $reset, time() ) );
 
 				if ( self::is_password_expired( $user_id ) ) {
-					$value = sprintf( '<span class="expass-is-expired">%s</span>', esc_html( $time_diff ) );
+					$value = sprintf( '<span class="%s-is-expired">%s</span>', esc_html( self::GENERIC_KEY ), esc_html( $time_diff ) );
 				} else {
-					$value = sprintf( '<span class="expass-not-expired">%s</span>', esc_html( $time_diff ) );
+					$value = sprintf( '<span class="%s-not-expired">%s</span>', esc_html( self::GENERIC_KEY ), esc_html( $time_diff ) );
 				}
 			}
 		}
@@ -505,9 +514,17 @@ class Expire_Passwords {
 	 * @return array
 	 */
 	public static function custom_user_row_action( $actions, $user ) {
+		/**
+		 * Filter when the manual Expire Password action link should
+		 * be shown in the Users list table.
+		 *
+		 * @param WP_User $user
+		 *
+		 * @return bool
+		 */
 		$show_link = apply_filters( 'expass_show_expire_password_link', true, $user );
 
-		if ( self::is_password_expired( $user->ID ) || ! $show_link ) {
+		if ( ! $show_link || self::is_password_expired( $user->ID ) ) {
 			return $actions;
 		}
 
@@ -520,8 +537,9 @@ class Expire_Passwords {
 		);
 
 		$actions[ self::GENERIC_KEY ] = sprintf(
-			'<a href="%s" class="expass-expire-password-link">%s</a>',
+			'<a href="%s" class="%s-expire-password-link">%s</a>',
 			esc_url( $link ),
+			esc_html( self::GENERIC_KEY ),
 			esc_html__( 'Expire Password', 'expire-passwords' )
 		);
 
