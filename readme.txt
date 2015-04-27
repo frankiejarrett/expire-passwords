@@ -1,6 +1,6 @@
 === Expire Passwords ===
 Contributors:      fjarrett
-Tags:              admin, membership, passwords, profile, security, users
+Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 3.7
 Tested up to:      4.2
 Stable tag:        0.1.0
