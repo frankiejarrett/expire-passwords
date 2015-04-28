@@ -18,7 +18,7 @@ Require certain users to change their passwords on a regular basis.
 
 Harden the security of your site by preventing unauthorized access of stale user accounts.
 
-This pluging is also ideal for sites needing to meet certain industry security compliances - such as government, banking or healthcare.
+This plugin is also ideal for sites needing to meet certain industry security compliances - such as government, banking or healthcare.
 
 In the plugin settings you can set the maximum number of days users are allowed to use the same password (90 days by default), as well as which user roles will be required to reset their passwords regularly (non-Administrators by default).
 
