@@ -17,7 +17,7 @@ Require certain users to change their passwords on a regular basis.
 
 **Did you find this plugin helpful? Please consider [leaving a 5-star review](https://wordpress.org/support/view/plugin-reviews/expire-passwords).**
 
-Harden the security of your site by preventing unauthorized access of stale user accounts.
+Harden the security of your site by preventing unauthorized access to stale user accounts.
 
 This plugin is also ideal for sites needing to meet certain industry security compliances - such as government, banking or healthcare.
 
