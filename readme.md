@@ -35,9 +35,9 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 ![Users with expired passwords are redirected to the password reset screen upon sign in.](assets/screenshot-2.png)
 
-### Users are not permitted to use the same password twice in a row.
+### Users are not permitted to use the same password two times in a row during reset.
 
-![Users are not permitted to use the same password twice in a row.](assets/screenshot-3.png)
+![Users are not permitted to use the same password two times in a row during reset.](assets/screenshot-3.png)
 
 ## Changelog ##
 

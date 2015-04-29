@@ -25,7 +25,7 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 1. Configure which user roles should be required to regularly reset their passwords and how often.
 2. Users with expired passwords are redirected to the password reset screen upon sign in.
-3. Users are not permitted to use the same password twice in a row.
+3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
 
