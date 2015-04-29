@@ -65,7 +65,15 @@ class Expire_Passwords_Login_Screen {
 		$new_pass1 = ! empty( $_POST['pass1'] ) ? $_POST['pass1'] : null;
 		$new_pass2 = ! empty( $_POST['pass2'] ) ? $_POST['pass2'] : null;
 
-		if ( is_null( $new_pass1 ) || is_null( $new_pass2 ) || $new_pass1 !== $new_pass2 ) {
+		if (
+			is_null( $new_pass1 )
+			||
+			is_null( $new_pass2 )
+			||
+			$new_pass1 !== $new_pass2
+			||
+			! Expire_Passwords::has_expirable_role( $user->ID )
+		) {
 			return;
 		}
 
