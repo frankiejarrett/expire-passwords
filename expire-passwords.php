@@ -152,7 +152,7 @@ class Expire_Passwords {
 	 */
 	public static function get_limit() {
 		$options = get_option( self::PREFIX . '_settings' );
-		$limit   = empty( $options['limit'] ) ? self::$default_limit : $options['limit'];
+		$limit   = ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? self::$default_limit : $options['limit'];
 
 		return absint( $limit );
 	}
