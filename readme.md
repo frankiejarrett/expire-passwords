@@ -9,7 +9,7 @@ Require certain users to change their passwords on a regular basis.
 **Requires at least:** 3.7  
 **Tested up to:** 4.2  
 **Stable tag:** 0.2.0  
-**License:** [GPLv2 or later](https://www.gnu.org/licenses/gpl-2.0.html)  
+**License:** [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)  
 
 [![Build Status](https://travis-ci.org/fjarrett/expire-passwords.png?branch=master)](https://travis-ci.org/fjarrett/expire-passwords) 
 
