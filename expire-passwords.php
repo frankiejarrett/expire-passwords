@@ -191,7 +191,7 @@ class Expire_Passwords {
 		$user_id = is_int( $user_id ) ? $user_id : ( isset( self::$user->ID ) ? self::$user->ID : null );
 
 		if ( ! get_userdata( $user_id ) ) {
-			return new WP_Error( 'error', esc_html__( 'User does not exist.', 'expire-passwords' ) );
+			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
 		}
 
 		$reset = self::get_user_meta( $user_id );
@@ -216,11 +216,11 @@ class Expire_Passwords {
 		$user = is_int( $user_id ) ? get_userdata( $user_id ) : self::$user;
 
 		if ( empty( $user ) ) {
-			return new WP_Error( 'error', esc_html__( 'User does not exist.', 'expire-passwords' ) );
+			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
 		}
 
 		if ( empty( $user->roles[0] ) ) {
-			return new WP_Error( 'error', esc_html__( 'User has no role assigned.', 'expire-passwords' ) );
+			return new WP_Error( 'user_has_no_role', esc_html__( 'User has no role assigned.', 'expire-passwords' ) );
 		}
 
 		$roles = array_intersect( $user->roles, self::get_roles() );
@@ -239,7 +239,7 @@ class Expire_Passwords {
 		$user_id = is_int( $user_id ) ? $user_id : ( isset( self::$user->ID ) ? self::$user->ID : null );
 
 		if ( ! get_userdata( $user_id ) ) {
-			return new WP_Error( 'error', esc_html__( 'User does not exist.', 'expire-passwords' ) );
+			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
 		}
 
 		if ( ! self::has_expirable_role( $user_id ) ) {
