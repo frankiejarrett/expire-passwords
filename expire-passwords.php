@@ -5,7 +5,7 @@
  * Version: 0.2.0
  * Author: Frankie Jarrett
  * Author URI: http://frankiejarrett.com
- * License: GPLv2+
+ * License: GPLv3
  * Text Domain: expire-passwords
  */
 
