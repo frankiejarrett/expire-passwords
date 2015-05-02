@@ -118,7 +118,7 @@ class Expire_Passwords {
 	 * @action user_register
 	 * @action password_reset
 	 *
-	 * @param WP_Object|int $user (optional)
+	 * @param WP_User|int $user (optional)
 	 *
 	 * @return void
 	 */
