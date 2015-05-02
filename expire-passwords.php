@@ -115,15 +115,16 @@ class Expire_Passwords {
 	/**
 	 * Save password reset user meta to the database
 	 *
-	 * @action password_reset
 	 * @action user_register
+	 * @action password_reset
 	 *
-	 * @param int $user_id (optional)
+	 * @param WP_Object|int $user (optional)
 	 *
 	 * @return void
 	 */
-	public static function save_user_meta( $user_id = null ) {
-		$user_id = is_int( $user_id ) ? $user_id : ( isset( self::$user->ID ) ? self::$user->ID : null );
+	public static function save_user_meta( $user = null ) {
+		$user_id = is_int( $user ) ? $user : ( isset( $user->ID ) ? $user->ID : null );
+		$user_id = absint( $user_id );
 
 		if ( ! get_userdata( $user_id ) ) {
 			return;
@@ -189,6 +190,7 @@ class Expire_Passwords {
 	 */
 	public static function get_expiration( $user_id = null, $date_format = 'U' ) {
 		$user_id = is_int( $user_id ) ? $user_id : ( isset( self::$user->ID ) ? self::$user->ID : null );
+		$user_id = absint( $user_id );
 
 		if ( ! get_userdata( $user_id ) ) {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
@@ -237,6 +239,7 @@ class Expire_Passwords {
 	 */
 	public static function is_password_expired( $user_id = null ) {
 		$user_id = is_int( $user_id ) ? $user_id : ( isset( self::$user->ID ) ? self::$user->ID : null );
+		$user_id = absint( $user_id );
 
 		if ( ! get_userdata( $user_id ) ) {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
