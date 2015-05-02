@@ -123,7 +123,7 @@ class Expire_Passwords {
 	 * @return void
 	 */
 	public static function save_user_meta( $user = null ) {
-		$user_id = is_int( $user ) ? $user : ( isset( $user->ID ) ? $user->ID : null );
+		$user_id = is_int( $user ) ? $user : ( isset( $user->ID ) ? $user->ID : ( isset( self::$user->ID ) ? self::$user->ID : null ) );
 		$user_id = absint( $user_id );
 
 		if ( ! get_userdata( $user_id ) ) {
