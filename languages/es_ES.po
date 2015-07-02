@@ -1,0 +1,79 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Expire Passwords 0.2.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/expire-passwords\n"
+"POT-Creation-Date: 2015-04-29 19:27:22+00:00\n"
+"PO-Revision-Date: 2015-04-29 14:33-0600\n"
+"Last-Translator: Frankie Jarrett <fjarrett@gmail.com>\n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.6\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: expire-passwords.php:194 expire-passwords.php:219 expire-passwords.php:242
+msgid "User does not exist."
+msgstr "El usuario no existe"
+
+#: expire-passwords.php:223
+msgid "User has no role assigned."
+msgstr "Usuario no tiene ningún papel asignado."
+
+#: includes/class-expire-passwords-list-table.php:62
+msgid "Password Reset"
+msgstr "Restablecer contraseña"
+
+#: includes/class-expire-passwords-list-table.php:85
+msgid "%1$s ago"
+msgstr "Hace %s"
+
+#: includes/class-expire-passwords-login-screen.php:83
+msgid "You cannot reuse your old password."
+msgstr "Usted no puede reutilizar tu contraseña anterior."
+
+#: includes/class-expire-passwords-login-screen.php:107
+msgid "Your password must be reset every %d days."
+msgstr "Su contraseña debe ser reajustada cada %d dias."
+
+#: includes/class-expire-passwords-login-screen.php:110
+msgid ""
+"Please enter your username or e-mail below and a password reset link will be "
+"sent to you."
+msgstr ""
+"Introduce tu nombre de usuario o correo electrónico abajo y un enlace de "
+"restablecimiento de contraseña será enviado a usted."
+
+#. Plugin Name of the plugin/theme
+#: includes/class-expire-passwords-settings.php:31
+#: includes/class-expire-passwords-settings.php:32
+#: includes/class-expire-passwords-settings.php:50
+msgid "Expire Passwords"
+msgstr ""
+
+#: includes/class-expire-passwords-settings.php:88
+msgid "Require password reset every"
+msgstr "Requerir restablecimiento de contraseña cada"
+
+#: includes/class-expire-passwords-settings.php:96
+msgid "For users in these roles"
+msgstr "Para los usuarios de estos roles"
+
+#. Description of the plugin/theme
+#: includes/class-expire-passwords-settings.php:113
+msgid "Require certain users to change their passwords on a regular basis."
+msgstr ""
+
+#: includes/class-expire-passwords-settings.php:131
+msgid "days"
+msgstr "dias"
+
+#. Author of the plugin/theme
+msgid "Frankie Jarrett"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://frankiejarrett.com"
+msgstr ""
