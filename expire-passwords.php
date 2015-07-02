@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Expire Passwords
  * Description: Require certain users to change their passwords on a regular basis.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: Frankie Jarrett
  * Author URI: http://frankiejarrett.com
  * License: GPLv3
@@ -22,7 +22,7 @@ class Expire_Passwords {
 	 *
 	 * @const string
 	 */
-	const VERSION = '0.2.0';
+	const VERSION = '0.2.1';
 
 	/**
 	 * Generic prefix/key identifier
