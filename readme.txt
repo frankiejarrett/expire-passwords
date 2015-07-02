@@ -3,7 +3,7 @@ Contributors:      fjarrett
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 3.7
 Tested up to:      4.2
-Stable tag:        0.2.1
+Stable tag:        0.2.2
 License:           GPLv3
 License URI:       https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,6 +33,12 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 0.2.2 - July 2, 2015 =
+
+* New: Language support for Español
+
+Props [@fjarrett](https://github.com/fjarrett)
 
 = 0.2.1 - July 2, 2015 =
 
