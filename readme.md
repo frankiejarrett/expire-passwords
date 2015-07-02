@@ -23,6 +23,11 @@ This plugin is also ideal for sites needing to meet certain industry security co
 
 In the plugin settings you can set the maximum number of days users are allowed to use the same password (90 days by default), as well as which user roles will be required to reset their passwords regularly (non-Administrators by default).
 
+**Languages supported:**
+
+* English
+* Español
+
 **Development of this plugin is done [on GitHub](https://github.com/fjarrett/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/fjarrett/expire-passwords/issues) there before going to the plugin forum.**
 
 ## Screenshots ##
