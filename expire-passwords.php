@@ -6,8 +6,14 @@
  * Author: Frankie Jarrett
  * Author URI: http://frankiejarrett.com
  * License: GPLv3
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: expire-passwords
+ * Domain Path: /languages
  */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class Expire_Passwords {
 
@@ -149,6 +155,10 @@ class Expire_Passwords {
 	/**
 	 * Return the password age limit setting
 	 *
+	 * A hard limit of 365 days is built into this plugin. If
+	 * you want to require passwords to be reset less than once
+	 * per year then you probably don't need this plugin. :-)
+	 *
 	 * @return int
 	 */
 	public static function get_limit() {
@@ -167,6 +177,10 @@ class Expire_Passwords {
 		$options = get_option( self::PREFIX . '_settings' );
 
 		if ( empty( $options ) ) {
+			if ( ! function_exists( 'get_editable_roles' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/user.php';
+			}
+
 			$roles = get_editable_roles();
 
 			// Return all roles except admins by default if not set
