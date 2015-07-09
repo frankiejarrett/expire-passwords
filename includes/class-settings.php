@@ -1,26 +1,29 @@
 <?php
 
+namespace Expire_Passwords;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Expire_Passwords_Settings {
+class Settings {
 
 	/**
-	 * Fire hooks
+	 * Plugin instance
 	 *
-	 * @action init
-	 *
-	 * @return void
+	 * @var Expire_Passwords_Plugin
 	 */
-	public static function load() {
-		if ( ! is_user_logged_in() ) {
-			return;
-		}
+	private $plugin;
 
-		add_action( 'admin_menu', array( __CLASS__, 'submenu_page' ) );
-		add_action( 'admin_init', array( __CLASS__, 'init' ) );
-		add_filter( 'admin_footer_text', array( __CLASS__, 'admin_footer_text' ) );
+	/**
+	 * Class constructor
+	 */
+	public function __construct( \Expire_Passwords_Plugin $plugin ) {
+		$this->plugin = $plugin;
+
+		add_action( 'admin_menu', array( $this, 'submenu_page' ) );
+		add_action( 'admin_init', array( $this, 'init' ) );
+		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
 	}
 
 	/**
@@ -30,14 +33,14 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return void
 	 */
-	public static function submenu_page() {
+	public function submenu_page() {
 		add_submenu_page(
 			'users.php',
 			esc_html__( 'Expire Passwords', 'expire-passwords' ),
 			esc_html__( 'Expire Passwords', 'expire-passwords' ),
 			'manage_options',
 			'expire_passwords',
-			array( __CLASS__, 'render_submenu_page' )
+			array( $this, 'render_submenu_page' )
 		);
 	}
 
@@ -48,7 +51,7 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return void
 	 */
-	public static function render_submenu_page() {
+	public function render_submenu_page() {
 		?>
 		<div class="wrap">
 
@@ -56,9 +59,9 @@ class Expire_Passwords_Settings {
 
 			<form method="post" action="options.php">
 
-				<?php settings_fields( Expire_Passwords::PREFIX . '_settings_page' ) ?>
+				<?php settings_fields( $this->plugin->prefix . '_settings_page' ) ?>
 
-				<?php do_settings_sections( Expire_Passwords::PREFIX . '_settings_page' ) ?>
+				<?php do_settings_sections( $this->plugin->prefix . '_settings_page' ) ?>
 
 				<?php submit_button() ?>
 
@@ -75,33 +78,33 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return void
 	 */
-	public static function init() {
+	public function init() {
 		register_setting(
-			Expire_Passwords::PREFIX . '_settings_page',
-			Expire_Passwords::PREFIX . '_settings'
+			$this->plugin->prefix . '_settings_page',
+			$this->plugin->prefix . '_settings'
 		);
 
 		add_settings_section(
-			Expire_Passwords::PREFIX . '_settings_page_section',
+			$this->plugin->prefix . '_settings_page_section',
 			null,
-			array( __CLASS__, 'render_section' ),
-			Expire_Passwords::PREFIX . '_settings_page'
+			array( $this, 'render_section' ),
+			$this->plugin->prefix . '_settings_page'
 		);
 
 		add_settings_field(
-			Expire_Passwords::PREFIX . '_settings_field_limit',
+			$this->plugin->prefix . '_settings_field_limit',
 			esc_html__( 'Require password reset every', 'expire-passwords' ),
-			array( __CLASS__, 'render_field_limit' ),
-			Expire_Passwords::PREFIX . '_settings_page',
-			Expire_Passwords::PREFIX . '_settings_page_section'
+			array( $this, 'render_field_limit' ),
+			$this->plugin->prefix . '_settings_page',
+			$this->plugin->prefix . '_settings_page_section'
 		);
 
 		add_settings_field(
-			Expire_Passwords::PREFIX . '_settings_field_roles',
+			$this->plugin->prefix . '_settings_field_roles',
 			esc_html__( 'For users in these roles', 'expire-passwords' ),
-			array( __CLASS__, 'render_field_roles' ),
-			Expire_Passwords::PREFIX . '_settings_page',
-			Expire_Passwords::PREFIX . '_settings_page_section'
+			array( $this, 'render_field_roles' ),
+			$this->plugin->prefix . '_settings_page',
+			$this->plugin->prefix . '_settings_page_section'
 		);
 	}
 
@@ -112,7 +115,7 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return void
 	 */
-	public static function render_section() {
+	public function render_section() {
 		?>
 		<p>
 			<?php esc_html_e( 'Require certain users to change their passwords on a regular basis.', 'expire-passwords' ) ?>
@@ -127,11 +130,11 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return void
 	 */
-	public static function render_field_limit() {
-		$options = get_option( Expire_Passwords::PREFIX . '_settings' );
+	public function render_field_limit() {
+		$options = get_option( $this->plugin->prefix . '_settings' );
 		$value   = isset( $options['limit'] ) ? $options['limit'] : null;
 		?>
-		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', Expire_Passwords::PREFIX ) ?>" placeholder="<?php echo esc_attr( Expire_Passwords::$default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
+		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', $this->plugin->prefix ) ?>" placeholder="<?php echo esc_attr( $this->plugin->default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
 		<?php
 		esc_html_e( 'days', 'expire-passwords' );
 	}
@@ -143,8 +146,8 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return void
 	 */
-	public static function render_field_roles() {
-		$options = get_option( Expire_Passwords::PREFIX . '_settings' );
+	public function render_field_roles() {
+		$options = get_option( $this->plugin->prefix . '_settings' );
 		$roles   = get_editable_roles();
 
 		foreach ( $roles as $role => $role_data ) :
@@ -158,8 +161,8 @@ class Expire_Passwords_Settings {
 			}
 			?>
 			<p>
-				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', Expire_Passwords::PREFIX, esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', Expire_Passwords::PREFIX, esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
-				<label for="<?php printf( '%s_settings[roles][%s]', Expire_Passwords::PREFIX, esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
+				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', $this->plugin->prefix, esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', $this->plugin->prefix, esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
+				<label for="<?php printf( '%s_settings[roles][%s]', $this->plugin->prefix, esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
 			</p>
 			<?php
 		endforeach;
@@ -174,7 +177,7 @@ class Expire_Passwords_Settings {
 	 *
 	 * @return string
 	 */
-	public static function admin_footer_text( $text ) {
+	public function admin_footer_text( $text ) {
 		$screen = get_current_screen();
 
 		if ( ! isset( $screen->id ) || 'users_page_expire_passwords' !== $screen->id ) {

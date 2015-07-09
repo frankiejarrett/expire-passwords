@@ -1,22 +1,29 @@
 <?php
 
+namespace Expire_Passwords;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Expire_Passwords_Login_Screen {
+class Login_Screen {
 
 	/**
-	 * Fire hooks
+	 * Plugin instance
 	 *
-	 * @action init
-	 *
-	 * @return void
+	 * @var Expire_Passwords_Plugin
 	 */
-	public static function load() {
-		add_action( 'wp_login', array( __CLASS__, 'wp_login' ), 10, 2 );
-		add_action( 'validate_password_reset', array( __CLASS__, 'validate_password_reset' ), 10, 2 );
-		add_filter( 'login_message', array( __CLASS__, 'lost_password_message' ) );
+	private $plugin;
+
+	/**
+	 * Class constructor
+	 */
+	public function __construct( \Expire_Passwords_Plugin $plugin ) {
+		$this->plugin = $plugin;
+
+		add_action( 'wp_login', array( $this, 'wp_login' ), 10, 2 );
+		add_action( 'validate_password_reset', array( $this, 'validate_password_reset' ), 10, 2 );
+		add_filter( 'login_message', array( $this, 'lost_password_message' ) );
 	}
 
 	/**
@@ -29,14 +36,14 @@ class Expire_Passwords_Login_Screen {
 	 *
 	 * @return void
 	 */
-	public static function wp_login( $user_login, $user ) {
-		$reset = Expire_Passwords::get_user_meta( $user->ID );
+	public function wp_login( $user_login, $user ) {
+		$reset = $this->plugin->get_user_meta( $user->ID );
 
 		if ( ! $reset ) {
-			Expire_Passwords::save_user_meta( $user->ID );
+			$this->plugin->save_user_meta( $user->ID );
 		}
 
-		if ( ! Expire_Passwords::is_password_expired( $user->ID ) ) {
+		if ( ! $this->plugin->is_password_expired( $user->ID ) ) {
 			return;
 		}
 
@@ -44,8 +51,8 @@ class Expire_Passwords_Login_Screen {
 
 		$location = add_query_arg(
 			array(
-				'action'                 => 'lostpassword',
-				Expire_Passwords::PREFIX => 'expired',
+				'action'              => 'lostpassword',
+				$this->plugin->prefix => 'expired',
 			),
 			wp_login_url()
 		);
@@ -65,7 +72,7 @@ class Expire_Passwords_Login_Screen {
 	 *
 	 * @return void
 	 */
-	public static function validate_password_reset( $errors, $user ) {
+	public function validate_password_reset( $errors, $user ) {
 		$new_pass1 = ! empty( $_POST['pass1'] ) ? $_POST['pass1'] : null;
 		$new_pass2 = ! empty( $_POST['pass2'] ) ? $_POST['pass2'] : null;
 
@@ -76,7 +83,7 @@ class Expire_Passwords_Login_Screen {
 			||
 			$new_pass1 !== $new_pass2
 			||
-			! Expire_Passwords::has_expirable_role( $user->ID )
+			! $this->plugin->has_expirable_role( $user->ID )
 		) {
 			return;
 		}
@@ -97,9 +104,9 @@ class Expire_Passwords_Login_Screen {
 	 *
 	 * @return string
 	 */
-	public static function lost_password_message( $message ) {
+	public function lost_password_message( $message ) {
 		$action = isset( $_GET['action'] ) ? $_GET['action'] : null;
-		$status = isset( $_GET[ Expire_Passwords::PREFIX ] ) ? $_GET[ Expire_Passwords::PREFIX ] : null;
+		$status = isset( $_GET[ $this->plugin->prefix ] ) ? $_GET[ $this->plugin->prefix ] : null;
 
 		if ( 'lostpassword' !== $action || 'expired' !== $status ) {
 			return $message;
@@ -109,7 +116,7 @@ class Expire_Passwords_Login_Screen {
 			'<p id="login_error">%s</p><br><p>%s</p>',
 			sprintf(
 				esc_html__( 'Your password must be reset every %d days.', 'expire-passwords' ),
-				Expire_Passwords::get_limit()
+				$this->plugin->get_limit()
 			),
 			esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'expire-passwords' )
 		);
