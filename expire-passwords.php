@@ -292,4 +292,15 @@ class Expire_Passwords_Plugin {
 
 }
 
-$GLOBALS['expire_passwords'] = Expire_Passwords_Plugin::instance();
+if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
+	function expass_php_version_fail_notice() {
+		?>
+		<div class="error">
+			<p><?php esc_html_e( 'The Expire Passwords plugin requires PHP version 5.3 or higher. Please contact your server administrator.', 'expire-passwords' ) ?></p>
+		</div>
+		<?php
+	}
+	add_action( 'all_admin_notices', 'expass_php_version_fail_notice' );
+} else {
+	$GLOBALS['expire_passwords'] = Expire_Passwords_Plugin::instance();
+}
