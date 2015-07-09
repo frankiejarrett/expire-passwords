@@ -112,11 +112,18 @@ class Login_Screen {
 			return $message;
 		}
 
+		$limit = $this->plugin->get_limit();
+
 		$message = sprintf(
 			'<p id="login_error">%s</p><br><p>%s</p>',
 			sprintf(
-				esc_html__( 'Your password must be reset every %d days.', 'expire-passwords' ),
-				$this->plugin->get_limit()
+				_n(
+					'Your password must be reset every day.',
+					'Your password must be reset every %d days.',
+					$limit,
+					'expire-passwords'
+				),
+				$limit
 			),
 			esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'expire-passwords' )
 		);
