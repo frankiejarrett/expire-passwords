@@ -181,7 +181,7 @@ class Expire_Passwords {
 				require_once ABSPATH . 'wp-admin/includes/user.php';
 			}
 
-			$roles = get_editable_roles();
+			$roles = array_keys( get_editable_roles() );
 
 			// Return all roles except admins by default if not set
 			if ( isset( $roles['administrator'] ) ) {
