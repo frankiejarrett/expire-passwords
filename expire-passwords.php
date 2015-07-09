@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Expire_Passwords_Plugin {
+final class Expire_Passwords_Plugin {
 
 	/**
 	 * Plugin version number
