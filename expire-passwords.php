@@ -34,7 +34,7 @@ final class Expire_Passwords_Plugin {
 	/**
 	 * Plugin instance
 	 *
-	 * @var Expire_Passwords_Plugin
+	 * @var object
 	 */
 	public static $_instance;
 
@@ -43,7 +43,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @var string
 	 */
-	public $prefix = 'expass';
+	public static $prefix = 'expass';
 
 	/**
 	 * Current user object
@@ -57,7 +57,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @var int
 	 */
-	public $default_limit;
+	public static $default_limit;
 
 	/**
 	 * Class constructor
@@ -69,7 +69,7 @@ final class Expire_Passwords_Plugin {
 		define( 'EXPIRE_PASSWORDS_INC_DIR', EXPIRE_PASSWORDS_DIR . 'includes/' );
 		define( 'EXPIRE_PASSWORDS_LANG_PATH', dirname( EXPIRE_PASSWORDS_PLUGIN ) . '/languages' );
 
-		add_action( 'plugins_loaded', array( $this, 'i18n' ) );
+		add_action( 'plugins_loaded', array( __CLASS__, 'i18n' ) );
 
 		foreach ( glob( EXPIRE_PASSWORDS_INC_DIR . '*.php' ) as $include ) {
 			if ( is_readable( $include ) ) {
@@ -100,7 +100,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return void
 	 */
-	public function i18n() {
+	public static function i18n() {
 		load_plugin_textdomain( 'expire-passwords', false, EXPIRE_PASSWORDS_LANG_PATH );
 	}
 
@@ -118,9 +118,9 @@ final class Expire_Passwords_Plugin {
 		 *
 		 * @return int
 		 */
-		$this->default_limit = absint( apply_filters( 'expass_default_limit', 90 ) );
+		self::$default_limit = absint( apply_filters( 'expass_default_limit', 90 ) );
 
-		add_action( 'user_register', array( $this, 'save_user_meta' ) );
+		add_action( 'user_register', array( __CLASS__, 'save_user_meta' ) );
 
 		new Expire_Passwords\Login_Screen( $this );
 
@@ -133,7 +133,7 @@ final class Expire_Passwords_Plugin {
 
 		$this->user = wp_get_current_user();
 
-		add_action( 'password_reset', array( $this, 'save_user_meta' ) );
+		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 	}
 
 	/**
@@ -146,7 +146,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return void
 	 */
-	public function save_user_meta( $user = null ) {
+	public static function save_user_meta( $user = null ) {
 		$user_id = is_int( $user ) ? $user : ( isset( $user->ID ) ? $user->ID : ( isset( $this->user->ID ) ? $this->user->ID : null ) );
 		$user_id = absint( $user_id );
 
@@ -164,7 +164,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return int|bool  Unix timestamp on success, false on failure
 	 */
-	public function get_user_meta( $user_id ) {
+	public static function get_user_meta( $user_id ) {
 		$value = get_user_meta( $user_id, self::META_KEY, true );
 
 		return empty( $value ) ? false : absint( $value );
@@ -179,9 +179,9 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return int
 	 */
-	public function get_limit() {
+	public static function get_limit() {
 		$options = get_option( $this->prefix . '_settings' );
-		$limit   = ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? $this->default_limit : $options['limit'];
+		$limit   = ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? self::$default_limit : $options['limit'];
 
 		return absint( $limit );
 	}
@@ -191,7 +191,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return array
 	 */
-	public function get_roles() {
+	public static function get_roles() {
 		$options = get_option( $this->prefix . '_settings' );
 
 		if ( empty( $options ) ) {
@@ -220,7 +220,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return string|bool|WP_Error
 	 */
-	public function get_expiration( $user_id = null, $date_format = 'U' ) {
+	public static function get_expiration( $user_id = null, $date_format = 'U' ) {
 		$user_id = is_int( $user_id ) ? $user_id : ( isset( $this->user->ID ) ? $this->user->ID : null );
 		$user_id = absint( $user_id );
 
@@ -228,13 +228,13 @@ final class Expire_Passwords_Plugin {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
 		}
 
-		$reset = $this->get_user_meta( $user_id );
+		$reset = self::get_user_meta( $user_id );
 
-		if ( ! $this->has_expirable_role( $user_id ) || ! $reset ) {
+		if ( ! self::has_expirable_role( $user_id ) || ! $reset ) {
 			return false;
 		}
 
-		$expires = strtotime( sprintf( '@%d + %d days', $reset, $this->get_limit() ) );
+		$expires = strtotime( sprintf( '@%d + %d days', $reset, self::get_limit() ) );
 
 		return gmdate( $date_format, $expires );
 	}
@@ -246,7 +246,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return bool|WP_Error
 	 */
-	public function has_expirable_role( $user_id = null ) {
+	public static function has_expirable_role( $user_id = null ) {
 		$user = is_int( $user_id ) ? get_userdata( $user_id ) : $this->user;
 
 		if ( empty( $user ) ) {
@@ -257,7 +257,7 @@ final class Expire_Passwords_Plugin {
 			return new WP_Error( 'user_has_no_role', esc_html__( 'User has no role assigned.', 'expire-passwords' ) );
 		}
 
-		$roles = array_intersect( $user->roles, $this->get_roles() );
+		$roles = array_intersect( $user->roles, self::get_roles() );
 
 		return ! empty( $roles );
 	}
@@ -269,7 +269,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @return bool|WP_Error
 	 */
-	public function is_password_expired( $user_id = null ) {
+	public static function is_password_expired( $user_id = null ) {
 		$user_id = is_int( $user_id ) ? $user_id : ( isset( $this->user->ID ) ? $this->user->ID : null );
 		$user_id = absint( $user_id );
 
@@ -277,11 +277,11 @@ final class Expire_Passwords_Plugin {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
 		}
 
-		if ( ! $this->has_expirable_role( $user_id ) ) {
+		if ( ! self::has_expirable_role( $user_id ) ) {
 			return false;
 		}
 
-		$expires = $this->get_expiration( $user_id );
+		$expires = self::get_expiration( $user_id );
 
 		if ( ! $expires ) {
 			return false;
@@ -292,14 +292,21 @@ final class Expire_Passwords_Plugin {
 
 }
 
+/**
+ * Display PHP version notice
+ *
+ * @return null
+ */
+function expass_php_version_fail_notice() {
+	?>
+	<div class="error">
+		<p><?php esc_html_e( 'The Expire Passwords plugin requires PHP version 5.3 or higher. Please contact your server administrator.', 'expire-passwords' ) ?></p>
+	</div>
+	<?php
+}
+
 if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
-	function expass_php_version_fail_notice() {
-		?>
-		<div class="error">
-			<p><?php esc_html_e( 'The Expire Passwords plugin requires PHP version 5.3 or higher. Please contact your server administrator.', 'expire-passwords' ) ?></p>
-		</div>
-		<?php
-	}
+	add_action( 'plugins_loaded', array( 'Expire_Passwords_Plugin', 'i18n' ) );
 	add_action( 'all_admin_notices', 'expass_php_version_fail_notice' );
 } else {
 	$GLOBALS['expire_passwords'] = Expire_Passwords_Plugin::instance();

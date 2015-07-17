@@ -6,21 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Login_Screen {
+use Expire_Passwords_Plugin as Plugin;
 
-	/**
-	 * Plugin instance
-	 *
-	 * @var Expire_Passwords_Plugin
-	 */
-	private $plugin;
+class Login_Screen {
 
 	/**
 	 * Class constructor
 	 */
-	public function __construct( \Expire_Passwords_Plugin $plugin ) {
-		$this->plugin = $plugin;
-
+	public function __construct() {
 		add_action( 'wp_login', array( $this, 'wp_login' ), 10, 2 );
 		add_action( 'validate_password_reset', array( $this, 'validate_password_reset' ), 10, 2 );
 		add_filter( 'login_message', array( $this, 'lost_password_message' ) );
@@ -37,13 +30,13 @@ class Login_Screen {
 	 * @return void
 	 */
 	public function wp_login( $user_login, $user ) {
-		$reset = $this->plugin->get_user_meta( $user->ID );
+		$reset = Plugin::get_user_meta( $user->ID );
 
 		if ( ! $reset ) {
-			$this->plugin->save_user_meta( $user->ID );
+			Plugin::save_user_meta( $user->ID );
 		}
 
-		if ( ! $this->plugin->is_password_expired( $user->ID ) ) {
+		if ( ! Plugin::is_password_expired( $user->ID ) ) {
 			return;
 		}
 
@@ -51,8 +44,8 @@ class Login_Screen {
 
 		$location = add_query_arg(
 			array(
-				'action'              => 'lostpassword',
-				$this->plugin->prefix => 'expired',
+				'action'                         => 'lostpassword',
+				Plugin::$prefix => 'expired',
 			),
 			wp_login_url()
 		);
@@ -83,7 +76,7 @@ class Login_Screen {
 			||
 			$new_pass1 !== $new_pass2
 			||
-			! $this->plugin->has_expirable_role( $user->ID )
+			! Plugin::has_expirable_role( $user->ID )
 		) {
 			return;
 		}
@@ -106,13 +99,13 @@ class Login_Screen {
 	 */
 	public function lost_password_message( $message ) {
 		$action = isset( $_GET['action'] ) ? $_GET['action'] : null;
-		$status = isset( $_GET[ $this->plugin->prefix ] ) ? $_GET[ $this->plugin->prefix ] : null;
+		$status = isset( $_GET[ Plugin::$prefix ] ) ? $_GET[ Plugin::$prefix ] : null;
 
 		if ( 'lostpassword' !== $action || 'expired' !== $status ) {
 			return $message;
 		}
 
-		$limit = $this->plugin->get_limit();
+		$limit = Plugin::get_limit();
 
 		$message = sprintf(
 			'<p id="login_error">%s</p><br><p>%s</p>',

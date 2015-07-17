@@ -6,21 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Settings {
+use Expire_Passwords_Plugin as Plugin;
 
-	/**
-	 * Plugin instance
-	 *
-	 * @var Expire_Passwords_Plugin
-	 */
-	private $plugin;
+class Settings {
 
 	/**
 	 * Class constructor
 	 */
-	public function __construct( \Expire_Passwords_Plugin $plugin ) {
-		$this->plugin = $plugin;
-
+	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'submenu_page' ) );
 		add_action( 'admin_init', array( $this, 'init' ) );
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ) );
@@ -59,9 +52,9 @@ class Settings {
 
 			<form method="post" action="options.php">
 
-				<?php settings_fields( $this->plugin->prefix . '_settings_page' ) ?>
+				<?php settings_fields( Plugin::$prefix . '_settings_page' ) ?>
 
-				<?php do_settings_sections( $this->plugin->prefix . '_settings_page' ) ?>
+				<?php do_settings_sections( Plugin::$prefix . '_settings_page' ) ?>
 
 				<?php submit_button() ?>
 
@@ -80,31 +73,31 @@ class Settings {
 	 */
 	public function init() {
 		register_setting(
-			$this->plugin->prefix . '_settings_page',
-			$this->plugin->prefix . '_settings'
+			Plugin::$prefix . '_settings_page',
+			Plugin::$prefix . '_settings'
 		);
 
 		add_settings_section(
-			$this->plugin->prefix . '_settings_page_section',
+			Plugin::$prefix . '_settings_page_section',
 			null,
 			array( $this, 'render_section' ),
-			$this->plugin->prefix . '_settings_page'
+			Plugin::$prefix . '_settings_page'
 		);
 
 		add_settings_field(
-			$this->plugin->prefix . '_settings_field_limit',
+			Plugin::$prefix . '_settings_field_limit',
 			esc_html__( 'Require password reset every', 'expire-passwords' ),
 			array( $this, 'render_field_limit' ),
-			$this->plugin->prefix . '_settings_page',
-			$this->plugin->prefix . '_settings_page_section'
+			Plugin::$prefix . '_settings_page',
+			Plugin::$prefix . '_settings_page_section'
 		);
 
 		add_settings_field(
-			$this->plugin->prefix . '_settings_field_roles',
+			Plugin::$prefix . '_settings_field_roles',
 			esc_html__( 'For users in these roles', 'expire-passwords' ),
 			array( $this, 'render_field_roles' ),
-			$this->plugin->prefix . '_settings_page',
-			$this->plugin->prefix . '_settings_page_section'
+			Plugin::$prefix . '_settings_page',
+			Plugin::$prefix . '_settings_page_section'
 		);
 	}
 
@@ -131,10 +124,10 @@ class Settings {
 	 * @return void
 	 */
 	public function render_field_limit() {
-		$options = get_option( $this->plugin->prefix . '_settings' );
+		$options = get_option( Plugin::$prefix . '_settings' );
 		$value   = isset( $options['limit'] ) ? $options['limit'] : null;
 		?>
-		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', $this->plugin->prefix ) ?>" placeholder="<?php echo esc_attr( $this->plugin->default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
+		<input type="number" min="1" max="365" maxlength="3" name="<?php printf( '%s_settings[limit]', Plugin::$prefix ) ?>" placeholder="<?php echo esc_attr( Plugin::$default_limit ) ?>" value="<?php echo esc_attr( $value ) ?>">
 		<?php
 		esc_html_e( 'days', 'expire-passwords' );
 	}
@@ -147,7 +140,7 @@ class Settings {
 	 * @return void
 	 */
 	public function render_field_roles() {
-		$options = get_option( $this->plugin->prefix . '_settings' );
+		$options = get_option( Plugin::$prefix . '_settings' );
 		$roles   = get_editable_roles();
 
 		foreach ( $roles as $role => $role_data ) :
@@ -161,8 +154,8 @@ class Settings {
 			}
 			?>
 			<p>
-				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', $this->plugin->prefix, esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', $this->plugin->prefix, esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
-				<label for="<?php printf( '%s_settings[roles][%s]', $this->plugin->prefix, esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
+				<input type="checkbox" name="<?php printf( '%s_settings[roles][%s]', Plugin::$prefix, esc_attr( $name ) ) ?>" id="<?php printf( '%s_settings[roles][%s]', Plugin::$prefix, esc_attr( $name ) ) ?>" <?php checked( $value, 1 ) ?> value="1">
+				<label for="<?php printf( '%s_settings[roles][%s]', Plugin::$prefix, esc_attr( $name ) ) ?>"><?php echo esc_html( $role_data['name'] ) ?></label>
 			</p>
 			<?php
 		endforeach;
