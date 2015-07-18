@@ -15,6 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+define( 'EXPIRE_PASSWORDS_PLUGIN', plugin_basename( __FILE__ ) );
+define( 'EXPIRE_PASSWORDS_DIR', plugin_dir_path( __FILE__ ) );
+define( 'EXPIRE_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );
+define( 'EXPIRE_PASSWORDS_INC_DIR', EXPIRE_PASSWORDS_DIR . 'includes/' );
+define( 'EXPIRE_PASSWORDS_LANG_PATH', dirname( EXPIRE_PASSWORDS_PLUGIN ) . '/languages' );
+
 final class Expire_Passwords_Plugin {
 
 	/**
@@ -46,13 +52,6 @@ final class Expire_Passwords_Plugin {
 	public static $prefix = 'expass';
 
 	/**
-	 * Current user object
-	 *
-	 * @var WP_User
-	 */
-	private $user;
-
-	/**
 	 * Default limit for password age (in days)
 	 *
 	 * @var int
@@ -63,12 +62,6 @@ final class Expire_Passwords_Plugin {
 	 * Class constructor
 	 */
 	private function __construct() {
-		define( 'EXPIRE_PASSWORDS_PLUGIN', plugin_basename( __FILE__ ) );
-		define( 'EXPIRE_PASSWORDS_DIR', plugin_dir_path( __FILE__ ) );
-		define( 'EXPIRE_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );
-		define( 'EXPIRE_PASSWORDS_INC_DIR', EXPIRE_PASSWORDS_DIR . 'includes/' );
-		define( 'EXPIRE_PASSWORDS_LANG_PATH', dirname( EXPIRE_PASSWORDS_PLUGIN ) . '/languages' );
-
 		add_action( 'plugins_loaded', array( __CLASS__, 'i18n' ) );
 
 		foreach ( glob( EXPIRE_PASSWORDS_INC_DIR . '*.php' ) as $include ) {
@@ -98,7 +91,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @action plugins_loaded
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public static function i18n() {
 		load_plugin_textdomain( 'expire-passwords', false, EXPIRE_PASSWORDS_LANG_PATH );
@@ -109,7 +102,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @action init
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function init() {
 		/**
@@ -122,16 +115,14 @@ final class Expire_Passwords_Plugin {
 
 		add_action( 'user_register', array( __CLASS__, 'save_user_meta' ) );
 
-		new Expire_Passwords\Login_Screen( $this );
+		new Expire_Passwords\Login_Screen;
 
 		if ( ! is_user_logged_in() ) {
 			return;
 		}
 
-		new Expire_Passwords\List_Table( $this );
-		new Expire_Passwords\Settings( $this );
-
-		$this->user = wp_get_current_user();
+		new Expire_Passwords\List_Table;
+		new Expire_Passwords\Settings;
 
 		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 	}
@@ -144,11 +135,10 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @param WP_User|int $user (optional)
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public static function save_user_meta( $user = null ) {
-		$user_id = is_int( $user ) ? $user : ( isset( $user->ID ) ? $user->ID : ( isset( $this->user->ID ) ? $this->user->ID : null ) );
-		$user_id = absint( $user_id );
+		$user_id = is_int( $user ) ? $user : ( is_a( $user, 'WP_User' ) ? $user->ID : get_current_user_id() );
 
 		if ( ! get_userdata( $user_id ) ) {
 			return;
@@ -160,11 +150,17 @@ final class Expire_Passwords_Plugin {
 	/**
 	 * Return password reset user meta from the database
 	 *
-	 * @param int $user_id
+	 * @param WP_User|int $user
 	 *
-	 * @return int|bool  Unix timestamp on success, false on failure
+	 * @return int|bool|WP_Error  Unix timestamp on success, false on failure
 	 */
-	public static function get_user_meta( $user_id ) {
+	public static function get_user_meta( $user ) {
+		$user_id = is_int( $user ) ? $user : ( is_a( $user, 'WP_User' ) ? $user->ID : get_current_user_id() );
+
+		if ( ! get_userdata( $user_id ) ) {
+			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
+		}
+
 		$value = get_user_meta( $user_id, self::META_KEY, true );
 
 		return empty( $value ) ? false : absint( $value );
@@ -180,7 +176,7 @@ final class Expire_Passwords_Plugin {
 	 * @return int
 	 */
 	public static function get_limit() {
-		$options = get_option( $this->prefix . '_settings' );
+		$options = get_option( self::$prefix . '_settings' );
 		$limit   = ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? self::$default_limit : $options['limit'];
 
 		return absint( $limit );
@@ -192,7 +188,7 @@ final class Expire_Passwords_Plugin {
 	 * @return array
 	 */
 	public static function get_roles() {
-		$options = get_option( $this->prefix . '_settings' );
+		$options = get_option( self::$prefix . '_settings' );
 
 		if ( empty( $options ) ) {
 			if ( ! function_exists( 'get_editable_roles' ) ) {
@@ -215,14 +211,13 @@ final class Expire_Passwords_Plugin {
 	/**
 	 * Return the password expiration date for a user
 	 *
-	 * @param int    $user_id (optional)
-	 * @param string $date_format (optional)
+	 * @param WP_User|int $user        (optional)
+	 * @param string      $date_format (optional)
 	 *
 	 * @return string|bool|WP_Error
 	 */
-	public static function get_expiration( $user_id = null, $date_format = 'U' ) {
-		$user_id = is_int( $user_id ) ? $user_id : ( isset( $this->user->ID ) ? $this->user->ID : null );
-		$user_id = absint( $user_id );
+	public static function get_expiration( $user = null, $date_format = 'U' ) {
+		$user_id = is_int( $user ) ? $user : ( is_a( $user, 'WP_User' ) ? $user->ID : get_current_user_id() );
 
 		if ( ! get_userdata( $user_id ) ) {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
@@ -242,12 +237,12 @@ final class Expire_Passwords_Plugin {
 	/**
 	 * Determine if a user belongs to an expirable role defined in the settings
 	 *
-	 * @param int $user_id (optional)
+	 * @param WP_User|int $user (optional)
 	 *
 	 * @return bool|WP_Error
 	 */
-	public static function has_expirable_role( $user_id = null ) {
-		$user = is_int( $user_id ) ? get_userdata( $user_id ) : $this->user;
+	public static function has_expirable_role( $user = null ) {
+		$user = is_int( $user ) ? get_userdata( $user ) : ( is_a( $user, 'WP_User' ) ? $user : wp_get_current_user() );
 
 		if ( empty( $user ) ) {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );
@@ -265,13 +260,12 @@ final class Expire_Passwords_Plugin {
 	/**
 	 * Determine if a user's password has exceeded the age limit
 	 *
-	 * @param int $user_id (optional)
+	 * @param WP_User|int $user (optional)
 	 *
 	 * @return bool|WP_Error
 	 */
-	public static function is_password_expired( $user_id = null ) {
-		$user_id = is_int( $user_id ) ? $user_id : ( isset( $this->user->ID ) ? $this->user->ID : null );
-		$user_id = absint( $user_id );
+	public static function is_password_expired( $user = null ) {
+		$user_id = is_int( $user ) ? $user : ( is_a( $user, 'WP_User' ) ? $user->ID : get_current_user_id() );
 
 		if ( ! get_userdata( $user_id ) ) {
 			return new WP_Error( 'user_does_not_exist', esc_html__( 'User does not exist.', 'expire-passwords' ) );

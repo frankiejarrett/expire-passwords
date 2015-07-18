@@ -27,16 +27,16 @@ class Login_Screen {
 	 * @param string  $user_login
 	 * @param WP_User $user
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function wp_login( $user_login, $user ) {
-		$reset = Plugin::get_user_meta( $user->ID );
+		$reset = Plugin::get_user_meta( $user );
 
 		if ( ! $reset ) {
-			Plugin::save_user_meta( $user->ID );
+			Plugin::save_user_meta( $user );
 		}
 
-		if ( ! Plugin::is_password_expired( $user->ID ) ) {
+		if ( ! Plugin::is_password_expired( $user ) ) {
 			return;
 		}
 
@@ -44,7 +44,7 @@ class Login_Screen {
 
 		$location = add_query_arg(
 			array(
-				'action'                         => 'lostpassword',
+				'action'        => 'lostpassword',
 				Plugin::$prefix => 'expired',
 			),
 			wp_login_url()
@@ -63,7 +63,7 @@ class Login_Screen {
 	 * @param WP_Error $errors
 	 * @param WP_User  $user
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function validate_password_reset( $errors, $user ) {
 		$new_pass1 = ! empty( $_POST['pass1'] ) ? $_POST['pass1'] : null;
@@ -76,7 +76,7 @@ class Login_Screen {
 			||
 			$new_pass1 !== $new_pass2
 			||
-			! Plugin::has_expirable_role( $user->ID )
+			! Plugin::has_expirable_role( $user )
 		) {
 			return;
 		}
@@ -98,7 +98,7 @@ class Login_Screen {
 	 * @return string
 	 */
 	public function lost_password_message( $message ) {
-		$action = isset( $_GET['action'] ) ? $_GET['action'] : null;
+		$action = isset( $_GET['action'] )          ? $_GET['action']          : null;
 		$status = isset( $_GET[ Plugin::$prefix ] ) ? $_GET[ Plugin::$prefix ] : null;
 
 		if ( 'lostpassword' !== $action || 'expired' !== $status ) {

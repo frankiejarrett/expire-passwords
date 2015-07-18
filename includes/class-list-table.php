@@ -24,7 +24,7 @@ class List_Table {
 	 *
 	 * @action admin_head
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function admin_css() {
 		$screen = get_current_screen();

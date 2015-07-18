@@ -24,7 +24,7 @@ class Settings {
 	 *
 	 * @action admin_menu
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function submenu_page() {
 		add_submenu_page(
@@ -42,7 +42,7 @@ class Settings {
 	 *
 	 * @see self::add_submenu_page()
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function render_submenu_page() {
 		?>
@@ -69,7 +69,7 @@ class Settings {
 	 *
 	 * @action admin_init
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function init() {
 		register_setting(
@@ -106,7 +106,7 @@ class Settings {
 	 *
 	 * @see self::init()
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function render_section() {
 		?>
@@ -121,7 +121,7 @@ class Settings {
 	 *
 	 * @see self::init()
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function render_field_limit() {
 		$options = get_option( Plugin::$prefix . '_settings' );
@@ -137,7 +137,7 @@ class Settings {
 	 *
 	 * @see self::init()
 	 *
-	 * @return void
+	 * @return null
 	 */
 	public function render_field_roles() {
 		$options = get_option( Plugin::$prefix . '_settings' );
