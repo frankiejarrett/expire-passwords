@@ -42,7 +42,7 @@ final class Expire_Passwords_Plugin {
 	 *
 	 * @var object
 	 */
-	public static $_instance;
+	private static $_instance;
 
 	/**
 	 * Generic prefix/key identifier
@@ -303,5 +303,5 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
 	add_action( 'plugins_loaded', array( 'Expire_Passwords_Plugin', 'i18n' ) );
 	add_action( 'all_admin_notices', 'expass_php_version_fail_notice' );
 } else {
-	$GLOBALS['expire_passwords'] = Expire_Passwords_Plugin::instance();
+	Expire_Passwords_Plugin::instance();
 }

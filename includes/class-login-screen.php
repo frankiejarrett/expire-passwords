@@ -66,13 +66,13 @@ class Login_Screen {
 	 * @return null
 	 */
 	public function validate_password_reset( $errors, $user ) {
-		$new_pass1 = ! empty( $_POST['pass1'] ) ? $_POST['pass1'] : null;
-		$new_pass2 = ! empty( $_POST['pass2'] ) ? $_POST['pass2'] : null;
+		$new_pass1 = filter_input( INPUT_POST, 'pass1' );
+		$new_pass2 = filter_input( INPUT_POST, 'pass2' );
 
 		if (
-			is_null( $new_pass1 )
+			! $new_pass1
 			||
-			is_null( $new_pass2 )
+			! $new_pass2
 			||
 			$new_pass1 !== $new_pass2
 			||
@@ -98,8 +98,8 @@ class Login_Screen {
 	 * @return string
 	 */
 	public function lost_password_message( $message ) {
-		$action = isset( $_GET['action'] )          ? $_GET['action']          : null;
-		$status = isset( $_GET[ Plugin::$prefix ] ) ? $_GET[ Plugin::$prefix ] : null;
+		$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
+		$status = filter_input( INPUT_GET, Plugin::$prefix, FILTER_SANITIZE_STRING );
 
 		if ( 'lostpassword' !== $action || 'expired' !== $status ) {
 			return $message;
