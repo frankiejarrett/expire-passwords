@@ -5,10 +5,12 @@
  * Version: 0.3.0
  * Author: Frankie Jarrett
  * Author URI: http://frankiejarrett.com
- * License: GPLv3
- * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: expire-passwords
  * Domain Path: /languages
+ *
+ * Copyright: © 2015 Frankie Jarrett.
+ * License: GNU General Public License v2.0
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
