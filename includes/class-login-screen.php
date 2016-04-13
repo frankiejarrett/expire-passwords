@@ -12,9 +12,11 @@ final class Expire_Passwords_Login_Screen {
 	 * Class constructor.
 	 */
 	public function __construct() {
-		add_action( 'wp_login', array( $this, 'wp_login' ), 10, 2 );
+
+		add_action( 'wp_login',                array( $this, 'wp_login' ), 10, 2 );
 		add_action( 'validate_password_reset', array( $this, 'validate_password_reset' ), 10, 2 );
-		add_filter( 'login_message', array( $this, 'lost_password_message' ) );
+		add_filter( 'login_message',           array( $this, 'lost_password_message' ) );
+
 	}
 
 	/**
