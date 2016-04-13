@@ -145,11 +145,11 @@ final class Expire_Passwords {
 	/**
 	 * Return password reset user meta from the database.
 	 *
-	 * @param  mixed $user
+	 * @param  mixed $user (optional)
 	 *
 	 * @return mixed|false
 	 */
-	public static function get_user_meta( $user ) {
+	public static function get_user_meta( $user = null ) {
 
 		if ( false === ( $user_id = self::get_user_id( $user ) ) ) {
 
@@ -225,11 +225,9 @@ final class Expire_Passwords {
 	public static function get_expiration( $user = null, $date_format = 'U' ) {
 
 		if (
-			false === ( $user_id = self::get_user_id( $user ) )
+			! self::has_expirable_role( $user )
 			||
-			! self::has_expirable_role( $user_id )
-			||
-			false === ( $reset = self::get_user_meta( $user_id ) )
+			false === ( $reset = self::get_user_meta( $user ) )
 		) {
 
 			return false;
@@ -272,19 +270,7 @@ final class Expire_Passwords {
 	 */
 	public static function is_expired( $user = null ) {
 
-		if (
-			false === ( $user_id = self::get_user_id( $user ) )
-			||
-			! self::has_expirable_role( $user_id )
-			||
-			false === ( $expires = self::get_expiration( $user_id ) )
-		) {
-
-			return false;
-
-		}
-
-		return ( time() > $expires );
+		return ( false === ( $expires = self::get_expiration( $user ) ) ) ? false : ( time() > $expires );
 
 	}
 
