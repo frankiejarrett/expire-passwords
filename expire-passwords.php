@@ -229,7 +229,7 @@ final class Expire_Passwords {
 			||
 			! self::has_expirable_role( $user_id )
 			||
-			! self::get_user_meta( $user_id )
+			false === ( $reset = self::get_user_meta( $user_id ) )
 		) {
 
 			return false;
