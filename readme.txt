@@ -3,7 +3,7 @@ Contributors:      fjarrett
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 3.8
 Tested up to:      4.5
-Stable tag:        0.3.0
+Stable tag:        0.4.0
 License:           GPLv2
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,13 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 0.4.0 - April 13, 2016 =
+
+* New: Indicate support for WordPress 4.5.
+* Tweak: Bring back PHP 5.2 compatibility.
+
+Props [@fjarrett](https://github.com/fjarrett)
 
 = 0.3.0 - July 9, 2015 =
 
