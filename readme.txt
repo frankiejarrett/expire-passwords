@@ -1,11 +1,11 @@
 === Expire Passwords ===
 Contributors:      fjarrett
 Tags:              admin, login, membership, passwords, profile, security, users
-Requires at least: 3.7
-Tested up to:      4.2
+Requires at least: 3.8
+Tested up to:      4.5
 Stable tag:        0.3.0
-License:           GPLv3
-License URI:       https://www.gnu.org/licenses/gpl-3.0.html
+License:           GPLv2
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
 Require certain users to change their passwords on a regular basis.
 
