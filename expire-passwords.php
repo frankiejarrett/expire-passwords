@@ -69,13 +69,13 @@ final class Expire_Passwords {
 	 */
 	public static function instance() {
 
-		if ( ! self::$instance ) {
+		if ( ! static::$instance ) {
 
-			self::$instance = new self();
+			static::$instance = new self();
 
 		}
 
-		return self::$instance;
+		return static::$instance;
 
 	}
 
@@ -103,7 +103,7 @@ final class Expire_Passwords {
 		 *
 		 * @return int
 		 */
-		self::$default_limit = absint( apply_filters( 'expass_default_limit', 90 ) );
+		static::$default_limit = absint( apply_filters( 'expass_default_limit', 90 ) );
 
 		add_action( 'user_register', array( __CLASS__, 'save_user_meta' ) );
 
@@ -132,9 +132,7 @@ final class Expire_Passwords {
 	 */
 	public static function save_user_meta( $user = null ) {
 
-		$user_id = self::get_user_id( $user );
-
-		if ( ! $user_id ) {
+		if ( false === ( $user_id = static::get_user_id( $user ) ) ) {
 
 			return;
 
@@ -153,9 +151,7 @@ final class Expire_Passwords {
 	 */
 	public static function get_user_meta( $user ) {
 
-		$user_id = self::get_user_id( $user );
-
-		if ( ! $user_id ) {
+		if ( false === ( $user_id = static::get_user_id( $user ) ) ) {
 
 			return false;
 
@@ -180,7 +176,7 @@ final class Expire_Passwords {
 
 		$options = (array) get_option( 'expass_settings', array() );
 
-		return ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? self::$default_limit : absint( $options['limit'] );
+		return ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? static::$default_limit : absint( $options['limit'] );
 
 	}
 
@@ -228,23 +224,19 @@ final class Expire_Passwords {
 	 */
 	public static function get_expiration( $user = null, $date_format = 'U' ) {
 
-		$user_id = self::get_user_id( $user );
-
-		if ( ! $user_id ) {
-
-			return false;
-
-		}
-
-		$reset = self::get_user_meta( $user_id );
-
-		if ( ! self::has_expirable_role( $user_id ) || ! $reset ) {
+		if (
+			false === ( $user_id = static::get_user_id( $user ) )
+			||
+			! static::has_expirable_role( $user_id )
+			||
+			! static::get_user_meta( $user_id )
+		) {
 
 			return false;
 
 		}
 
-		$expires = strtotime( sprintf( '@%d + %d days', $reset, self::get_limit() ) );
+		$expires = strtotime( sprintf( '@%d + %d days', $reset, static::get_limit() ) );
 
 		return gmdate( $date_format, $expires );
 
@@ -259,9 +251,7 @@ final class Expire_Passwords {
 	 */
 	public static function has_expirable_role( $user = null ) {
 
-		$user_id = self::get_user_id( $user );
-
-		if ( ! $user_id ) {
+		if ( false === ( $user_id = static::get_user_id( $user ) ) ) {
 
 			return false;
 
@@ -269,7 +259,7 @@ final class Expire_Passwords {
 
 		$user = get_user_by( 'ID', $user_id );
 
-		return empty( $user->roles[0] ) ? false : ( array_intersect( $user->roles, self::get_roles() ) );
+		return empty( $user->roles[0] ) ? false : ( array_intersect( $user->roles, static::get_roles() ) );
 
 	}
 
@@ -282,23 +272,13 @@ final class Expire_Passwords {
 	 */
 	public static function is_expired( $user = null ) {
 
-		$user_id = self::get_user_id( $user );
-
-		if ( ! $user_id ) {
-
-			return false;
-
-		}
-
-		if ( ! self::has_expirable_role( $user_id ) ) {
-
-			return false;
-
-		}
-
-		$expires = self::get_expiration( $user_id );
-
-		if ( ! $expires ) {
+		if (
+			false === ( $user_id = static::get_user_id( $user ) )
+			||
+			! static::has_expirable_role( $user_id )
+			||
+			false === ( $expires = static::get_expiration( $user_id ) )
+		) {
 
 			return false;
 
