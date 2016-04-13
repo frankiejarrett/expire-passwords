@@ -33,7 +33,7 @@ final class Expire_Passwords_Login_Screen {
 
 		}
 
-		if ( ! Expire_Passwords::is_password_expired( $user ) ) {
+		if ( ! Expire_Passwords::is_expired( $user ) ) {
 
 			return;
 

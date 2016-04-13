@@ -91,7 +91,7 @@ final class Expire_Passwords_List_Table {
 		if (
 			! Expire_Passwords::has_expirable_role( $user_id )
 			||
-			! Expire_Passwords::get_user_meta( $user_id )
+			false === ( $reset = Expire_Passwords::get_user_meta( $user_id ) )
 		) {
 
 			return '&mdash;';
