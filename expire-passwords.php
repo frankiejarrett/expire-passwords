@@ -315,28 +315,4 @@ final class Expire_Passwords {
 
 }
 
-/**
- * Display PHP version notice.
- *
- * @return null
- */
-function expass_php_version_fail_notice() {
-
-	?>
-	<div class="error">
-		<p><?php esc_html_e( 'The Expire Passwords plugin requires PHP version 5.3 or higher. Please contact your server administrator.', 'expire-passwords' ) ?></p>
-	</div>
-	<?php
-
-}
-
-if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
-
-	add_action( 'plugins_loaded', array( 'Expire_Passwords', 'i18n' ) );
-	add_action( 'all_admin_notices', 'expass_php_version_fail_notice' );
-
-} else {
-
-	Expire_Passwords::instance();
-
-}
+Expire_Passwords::instance();
