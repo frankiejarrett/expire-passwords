@@ -257,7 +257,7 @@ final class Expire_Passwords {
 
 		$user = get_user_by( 'ID', $user_id );
 
-		return empty( $user->roles[0] ) ? false : ( array_intersect( $user->roles, self::get_roles() ) );
+		return empty( $user->roles[0] ) ? false : ! empty( array_intersect( $user->roles, self::get_roles() ) );
 
 	}
 
