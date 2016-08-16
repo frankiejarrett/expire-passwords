@@ -2,9 +2,9 @@
 Contributors:      fjarrett
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 3.8
-Tested up to:      4.5
+Tested up to:      4.6
 Stable tag:        0.4.0
-License:           GPLv2
+License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
 Require certain users to change their passwords on a regular basis.
