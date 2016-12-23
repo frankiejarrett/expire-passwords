@@ -49,6 +49,7 @@ In the plugin settings you can set the maximum number of days users are allowed 
 
 ### 0.5.0 - December 23, 2016 ###
 * Tweak: Indicate support for WordPress 4.7 and require at least 4.0.
+* Fix: Selected user roles in plugin settings not always being honored.
 * Fix: Destroy all sessions after login with an expired password.
 
 ### 0.4.0 - April 13, 2016 ###
