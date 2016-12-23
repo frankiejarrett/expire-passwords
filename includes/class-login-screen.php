@@ -41,6 +41,8 @@ final class Expire_Passwords_Login_Screen {
 
 		}
 
+		$GLOBALS['current_user'] = $user; // Required to destroy sessions
+
 		wp_destroy_all_sessions();
 
 		wp_safe_redirect(
