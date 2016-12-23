@@ -6,9 +6,9 @@ Require certain users to change their passwords on a regular basis.
 
 **Contributors:** [fjarrett](https://profiles.wordpress.org/fjarrett)  
 **Tags:** [admin](https://wordpress.org/plugins/tags/admin), [login](https://wordpress.org/plugins/tags/login), [membership](https://wordpress.org/plugins/tags/membership), [passwords](https://wordpress.org/plugins/tags/passwords), [profile](https://wordpress.org/plugins/tags/profile), [security](https://wordpress.org/plugins/tags/security), [users](https://wordpress.org/plugins/tags/users)  
-**Requires at least:** 3.8  
-**Tested up to:** 4.6  
-**Stable tag:** 0.4.0  
+**Requires at least:** 4.0  
+**Tested up to:** 4.7  
+**Stable tag:** 0.5.0  
 **License:** [GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.html)  
 
 [![Build Status](https://travis-ci.org/fjarrett/expire-passwords.svg?branch=master)](https://travis-ci.org/fjarrett/expire-passwords) 
@@ -46,6 +46,10 @@ In the plugin settings you can set the maximum number of days users are allowed 
 ![Users are not permitted to use the same password two times in a row during reset.](assets/screenshot-3.png)
 
 ## Changelog ##
+
+### 0.5.0 - December 23, 2016 ###
+* Tweak: Indicate support for WordPress 4.7 and require at least 4.0.
+* Fix: Destroy all sessions after login with an expired password.
 
 ### 0.4.0 - April 13, 2016 ###
 * New: Indicate support for WordPress 4.5.

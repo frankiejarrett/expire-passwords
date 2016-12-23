@@ -1,9 +1,9 @@
 === Expire Passwords ===
 Contributors:      fjarrett
 Tags:              admin, login, membership, passwords, profile, security, users
-Requires at least: 3.8
-Tested up to:      4.6
-Stable tag:        0.4.0
+Requires at least: 4.0
+Tested up to:      4.7
+Stable tag:        0.5.0
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,11 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 0.5.0 - December 23, 2016 =
+
+* Tweak: Indicate support for WordPress 4.7 and require at least 4.0.
+* Fix: Destroy all sessions after login with an expired password.
 
 = 0.4.0 - April 13, 2016 =
 
