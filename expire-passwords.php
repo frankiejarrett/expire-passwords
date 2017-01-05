@@ -105,7 +105,8 @@ final class Expire_Passwords {
 		 */
 		self::$default_limit = absint( apply_filters( 'expass_default_limit', 90 ) );
 
-		add_action( 'user_register', array( __CLASS__, 'save_user_meta' ) );
+		add_action( 'user_register',  array( __CLASS__, 'save_user_meta' ) );
+		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 
 		new Expire_Passwords_Login_Screen;
 
@@ -117,8 +118,6 @@ final class Expire_Passwords {
 
 		new Expire_Passwords_List_Table;
 		new Expire_Passwords_Settings;
-
-		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 
 	}
 
