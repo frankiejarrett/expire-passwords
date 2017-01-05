@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Expire Passwords
  * Description: Require certain users to change their passwords on a regular basis.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Author: Frankie Jarrett
  * Author URI: https://frankiejarrett.com
  * Text Domain: expire-passwords
  * License: GPL-2.0
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  *
- * Copyright © 2016 Frankie Jarrett. All Rights Reserved.
+ * Copyright © 2017 Frankie Jarrett. All Rights Reserved.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-define( 'EXPIRE_PASSWORDS_VERSION', '0.5.0' );
+define( 'EXPIRE_PASSWORDS_VERSION', '0.6.0' );
 define( 'EXPIRE_PASSWORDS_PLUGIN', plugin_basename( __FILE__ ) );
 define( 'EXPIRE_PASSWORDS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'EXPIRE_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );

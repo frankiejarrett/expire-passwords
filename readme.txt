@@ -3,7 +3,7 @@ Contributors:      fjarrett
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
 Tested up to:      4.7
-Stable tag:        0.5.0
+Stable tag:        0.6.0
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,12 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 0.6.0 - January 5, 2017 =
+
+* Fix: Expiration not updating when resetting a password via email confirmation link.
+
+Props [@fjarrett](https://github.com/fjarrett)
 
 = 0.5.0 - December 23, 2016 =
 
