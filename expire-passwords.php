@@ -5,9 +5,13 @@
  * Version: 0.6.0
  * Author: Frankie Jarrett
  * Author URI: https://frankiejarrett.com
- * Text Domain: expire-passwords
  * License: GPL-2.0
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: expire-passwords
+ * Domain Path: /languages
+ *
+ * This plugin, like WordPress, is licensed under the GPL.
+ * Use it to make something cool, have fun, and share what you've learned with others.
  *
  * Copyright © 2017 Frankie Jarrett. All Rights Reserved.
  */
