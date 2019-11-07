@@ -1,15 +1,17 @@
 === Expire Passwords ===
-Contributors:      fjarrett
+Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
-Tested up to:      4.7
-Stable tag:        0.6.0
+Tested up to:      5.3
+Stable tag:        1.0.0
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
 Require certain users to change their passwords on a regular basis.
 
 == Description ==
+
+Note: This is a forked version of the now unsupported [Expire Passwords](https://wordpress.org/plugins/expire-passwords/) plugin. The notes below are copied over from the original plugin and will be updated as relevant updates become available. Please help by contributing to the GitHub repository [Expire Passwords](https://github.com/Miller-Media/expire-passwords) on GitHub
 
 **Did you find this plugin helpful? Please consider [leaving a 5-star review](https://wordpress.org/support/view/plugin-reviews/expire-passwords).**
 
@@ -25,7 +27,7 @@ In the plugin settings you can set the maximum number of days users are allowed 
 * Czech
 * Español
 
-**Development of this plugin is done [on GitHub](https://github.com/fjarrett/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/fjarrett/expire-passwords/issues) there before going to the plugin forum.**
+**Development of this plugin is done [on GitHub](https://github.com/Miller-Media/expire-passwords). Pull requests welcome. Please see [issues reported](https://github.com/Miller-Media/expire-passwords/issues) there before going to the plugin forum.**
 
 == Screenshots ==
 
@@ -34,6 +36,12 @@ In the plugin settings you can set the maximum number of days users are allowed 
 3. Users are not permitted to use the same password two times in a row during reset.
 
 == Changelog ==
+
+= 1.0.0 - November 7, 2019 =
+
+* New: Indicate support for WordPress 5.3
+
+Props [@Miller-Media](https://github.com/Miller-Media)
 
 = 0.6.0 - January 5, 2017 =
 
