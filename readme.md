@@ -4,16 +4,18 @@
 ![Banner](assets/banner-1544x500.png)
 Require certain users to change their passwords on a regular basis.
 
-**Contributors:** [fjarrett](https://profiles.wordpress.org/fjarrett)  
+**Contributors:** [fjarrett](https://profiles.wordpress.org/fjarrett), [millermedianow](https://profiles.wordpress.org/millermedianow), [millermediadev](https://profiles.wordpress.org/millermediadev)  
 **Tags:** [admin](https://wordpress.org/plugins/tags/admin), [login](https://wordpress.org/plugins/tags/login), [membership](https://wordpress.org/plugins/tags/membership), [passwords](https://wordpress.org/plugins/tags/passwords), [profile](https://wordpress.org/plugins/tags/profile), [security](https://wordpress.org/plugins/tags/security), [users](https://wordpress.org/plugins/tags/users)  
 **Requires at least:** 4.0  
-**Tested up to:** 4.7  
-**Stable tag:** 0.6.0  
+**Tested up to:** 5.3  
+**Stable tag:** 1.0.0  
 **License:** [GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.html)  
 
 [![Build Status](https://travis-ci.org/fjarrett/expire-passwords.svg?branch=master)](https://travis-ci.org/fjarrett/expire-passwords) 
 
 ## Description ##
+
+Note: This is a forked version of the now unsupported [Expire Passwords](https://wordpress.org/plugins/expire-passwords/) plugin. The notes below are copied over from the original plugin and will be updated as relevant updates become available.
 
 **Did you find this plugin helpful? Please consider [leaving a 5-star review](https://wordpress.org/support/view/plugin-reviews/expire-passwords).**
 
@@ -46,6 +48,9 @@ In the plugin settings you can set the maximum number of days users are allowed 
 ![Users are not permitted to use the same password two times in a row during reset.](assets/screenshot-3.png)
 
 ## Changelog ##
+
+### 1.0.0 - November 7, 2019 ###
+* New: Indicate support for WordPress 5.3
 
 ### 0.6.0 - January 5, 2017 ###
 * Fix: Expiration not updating when resetting a password via email confirmation link.
