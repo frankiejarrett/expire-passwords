@@ -1,4 +1,5 @@
 <?php
+namespace MillerMedia\AutoExpirePasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
 
