@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Auto-Expire Passwords
+ * Plugin Name: Expire User Passwords
  * Description: Require certain users to change their passwords on a regular basis.
  * Version: 1.0.0
  * Author: Miller Media
  * Author URI: https://www.millermedia.io
  * License: GPL-2.0
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: auto-expire-passwords
+ * Text Domain: expire-user-passwords
  * Domain Path: /languages
  *
  * This plugin, like WordPress, is licensed under the GPL.
@@ -15,7 +15,7 @@
  *
  * Copyright © 2019 Miller Media. All Rights Reserved.
  */
-namespace MillerMedia\AutoExpirePasswords;
+namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
 
@@ -23,19 +23,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-define( 'AUTO_EXPIRE_PASSWORDS_VERSION', '1.0.0' );
-define( 'AUTO_EXPIRE_PASSWORDS_PLUGIN', plugin_basename( __FILE__ ) );
-define( 'AUTO_EXPIRE_PASSWORDS_DIR', plugin_dir_path( __FILE__ ) );
-define( 'AUTO_EXPIRE_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );
-define( 'AUTO_EXPIRE_PASSWORDS_INC_DIR', AUTO_EXPIRE_PASSWORDS_DIR . 'includes/' );
-define( 'AUTO_EXPIRE_PASSWORDS_LANG_PATH', dirname( AUTO_EXPIRE_PASSWORDS_PLUGIN ) . '/languages' );
+define( 'EXPIRE_USER_PASSWORDS_VERSION', '1.0.0' );
+define( 'EXPIRE_USER_PASSWORDS_PLUGIN', plugin_basename( __FILE__ ) );
+define( 'EXPIRE_USER_PASSWORDS_DIR', plugin_dir_path( __FILE__ ) );
+define( 'EXPIRE_USER_PASSWORDS_URL', plugin_dir_url( __FILE__ ) );
+define( 'EXPIRE_USER_PASSWORDS_INC_DIR', EXPIRE_USER_PASSWORDS_DIR . 'includes/' );
+define( 'EXPIRE_USER_PASSWORDS_LANG_PATH', dirname( EXPIRE_USER_PASSWORDS_PLUGIN ) . '/languages' );
 
-final class Auto_Expire_Passwords {
+final class Expire_User_Passwords {
 
 	/**
 	 * Plugin instance.
 	 *
-	 * @var Auto_Expire_Passwords
+	 * @var Expire_User_Passwords
 	 */
 	private static $instance;
 
@@ -53,7 +53,7 @@ final class Auto_Expire_Passwords {
 
 		add_action( 'plugins_loaded', array( __CLASS__, 'i18n' ) );
 
-		foreach ( glob( AUTO_EXPIRE_PASSWORDS_INC_DIR . '*.php' ) as $include ) {
+		foreach ( glob( EXPIRE_USER_PASSWORDS_INC_DIR . '*.php' ) as $include ) {
 
 			if ( is_readable( $include ) ) {
 
@@ -70,7 +70,7 @@ final class Auto_Expire_Passwords {
 	/**
 	 * Return the plugin instance.
 	 *
-	 * @return Auto_Expire_Passwords
+	 * @return Expire_User_Passwords
 	 */
 	public static function instance() {
 
@@ -91,7 +91,7 @@ final class Auto_Expire_Passwords {
 	 */
 	public static function i18n() {
 
-		load_plugin_textdomain( 'auto-expire-passwords', false, AUTO_EXPIRE_PASSWORDS_LANG_PATH );
+		load_plugin_textdomain( 'expire-user-passwords', false, EXPIRE_USER_PASSWORDS_LANG_PATH );
 
 	}
 
@@ -108,12 +108,12 @@ final class Auto_Expire_Passwords {
 		 *
 		 * @return int
 		 */
-		self::$default_limit = absint( apply_filters( 'auto_expass_default_limit', 90 ) );
+		self::$default_limit = absint( apply_filters( 'user_expass_default_limit', 90 ) );
 
 		add_action( 'user_register',  array( __CLASS__, 'save_user_meta' ) );
 		add_action( 'password_reset', array( __CLASS__, 'save_user_meta' ) );
 
-		new Auto_Expire_Passwords_Login_Screen;
+		new Expire_User_Passwords_Login_Screen;
 
 		if ( ! is_user_logged_in() ) {
 
@@ -121,8 +121,8 @@ final class Auto_Expire_Passwords {
 
 		}
 
-		new Auto_Expire_Passwords_List_Table;
-		new Auto_Expire_Passwords_Settings;
+		new Expire_User_Passwords_List_Table;
+		new Expire_User_Passwords_Settings;
 
 	}
 
@@ -142,7 +142,7 @@ final class Auto_Expire_Passwords {
 
 		}
 
-		update_user_meta( $user_id, 'auto_expass_password_reset', gmdate( 'U' ) );
+		update_user_meta( $user_id, 'user_expass_password_reset', gmdate( 'U' ) );
 
 	}
 
@@ -161,7 +161,7 @@ final class Auto_Expire_Passwords {
 
 		}
 
-		$value = get_user_meta( $user_id, 'auto_expass_password_reset', true );
+		$value = get_user_meta( $user_id, 'user_expass_password_reset', true );
 
 		return ( $value ) ? absint( $value ) : false;
 
@@ -178,7 +178,7 @@ final class Auto_Expire_Passwords {
 	 */
 	public static function get_limit() {
 
-		$options = (array) get_option( 'auto_expass_settings', array() );
+		$options = (array) get_option( 'user_expass_settings', array() );
 
 		return ( empty( $options['limit'] ) || absint( $options['limit'] ) > 365 ) ? self::$default_limit : absint( $options['limit'] );
 
@@ -191,7 +191,7 @@ final class Auto_Expire_Passwords {
 	 */
 	public static function get_roles() {
 
-		$options = (array) get_option( 'auto_expass_settings', array() );
+		$options = (array) get_option( 'user_expass_settings', array() );
 
 		if ( ! empty( $options['roles'] ) ) {
 
@@ -320,4 +320,4 @@ final class Auto_Expire_Passwords {
 
 }
 
-Auto_Expire_Passwords::instance();
+Expire_User_Passwords::instance();

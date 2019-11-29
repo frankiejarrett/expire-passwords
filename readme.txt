@@ -1,4 +1,4 @@
-=== Auto-Expire Passwords ===
+=== Expire User Passwords ===
 Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
