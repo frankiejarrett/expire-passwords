@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-final class Expire_Passwords_List_Table {
+final class Auto_Expire_Passwords_List_Table {
 
 	/**
 	 * Class constructor.
@@ -37,15 +37,15 @@ final class Expire_Passwords_List_Table {
 
 		?>
 		<style type="text/css">
-		.fixed .column-expass {
+		.fixed .column-auto-expass {
 			width: 150px;
 		}
 		@media screen and (max-width: 782px) {
-			.fixed .column-expass {
+			.fixed .column-auto-expass {
 				display: none;
 			}
 		}
-		.expass-is-expired {
+		.auto-expass-is-expired {
 			color: #a00;
 		}
 		</style>
@@ -64,7 +64,7 @@ final class Expire_Passwords_List_Table {
 	 */
 	public function users_column( $columns ) {
 
-		$columns['expass'] = esc_html__( 'Password Reset', 'expire-passwords' );
+		$columns['auto-expass'] = esc_html__( 'Password Reset', 'auto-expire-passwords' );
 
 		return $columns;
 
@@ -83,24 +83,24 @@ final class Expire_Passwords_List_Table {
 	 */
 	public function render_users_column( $value, $column_name, $user_id ) {
 
-		if ( 'expass' !== $column_name ) {
+		if ( 'auto-expass' !== $column_name ) {
 
 			return $value;
 
 		}
 
 		if (
-			! Expire_Passwords::has_expirable_role( $user_id )
+			! Auto_Expire_Passwords::has_expirable_role( $user_id )
 			||
-			false === ( $reset = Expire_Passwords::get_user_meta( $user_id ) )
+			false === ( $reset = Auto_Expire_Passwords::get_user_meta( $user_id ) )
 		) {
 
 			return '&mdash;';
 
 		}
 
-		$time_diff = sprintf( __( '%1$s ago', 'expire-passwords' ), human_time_diff( $reset, time() ) );
-		$class     = Expire_Passwords::is_expired( $user_id ) ? 'expass-is-expired' : 'expass-not-expired';
+		$time_diff = sprintf( __( '%1$s ago', 'auto-expire-passwords' ), human_time_diff( $reset, time() ) );
+		$class     = Auto_Expire_Passwords::is_expired( $user_id ) ? 'auto-expass-is-expired' : 'auto-expass-not-expired';
 
 		return sprintf(
 			'<span class="%s">%s</span>',
