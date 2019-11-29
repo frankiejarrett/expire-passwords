@@ -3,8 +3,8 @@
  * Plugin Name: Auto-Expire Passwords
  * Description: Require certain users to change their passwords on a regular basis.
  * Version: 1.0.0
- * Author: Frankie Jarrett
- * Author URI: https://frankiejarrett.com
+ * Author: Miller Media
+ * Author URI: https://www.millermedia.io
  * License: GPL-2.0
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: auto-expire-passwords
@@ -13,7 +13,7 @@
  * This plugin, like WordPress, is licensed under the GPL.
  * Use it to make something cool, have fun, and share what you've learned with others.
  *
- * Copyright © 2017 Frankie Jarrett. All Rights Reserved.
+ * Copyright © 2019 Miller Media. All Rights Reserved.
  */
 namespace MillerMedia\AutoExpirePasswords;
 
