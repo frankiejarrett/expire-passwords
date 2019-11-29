@@ -13,7 +13,7 @@ Require certain users to change their passwords on a regular basis.
 
 Note: This is a forked version of the now unsupported [Expire Passwords](https://wordpress.org/plugins/expire-passwords/) plugin. The notes below are copied over from the original plugin and will be updated as relevant updates become available. Please help by contributing to the GitHub repository [Expire Passwords](https://github.com/Miller-Media/expire-passwords) on GitHub
 
-**Did you find this plugin helpful? Please consider [leaving a 5-star review](https://wordpress.org/support/view/plugin-reviews/expire-passwords).**
+**Did you find this plugin helpful? Please consider [leaving a 5-star review](https://wordpress.org/support/view/plugin-reviews/expire-user-passwords).**
 
 Harden the security of your site by preventing unauthorized access to stale user accounts.
 
