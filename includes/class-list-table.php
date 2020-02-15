@@ -1,5 +1,5 @@
 <?php
-namespace MillerMedia\AutoExpirePasswords;
+namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
 
@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-final class Auto_Expire_Passwords_List_Table {
+final class Expire_User_Passwords_List_Table {
 
 	/**
 	 * Class constructor.
@@ -37,15 +37,15 @@ final class Auto_Expire_Passwords_List_Table {
 
 		?>
 		<style type="text/css">
-		.fixed .column-auto-expass {
+		.fixed .column-user-expass {
 			width: 150px;
 		}
 		@media screen and (max-width: 782px) {
-			.fixed .column-auto-expass {
+			.fixed .column-user-expass {
 				display: none;
 			}
 		}
-		.auto-expass-is-expired {
+		.user-expass-is-expired {
 			color: #a00;
 		}
 		</style>
@@ -64,7 +64,7 @@ final class Auto_Expire_Passwords_List_Table {
 	 */
 	public function users_column( $columns ) {
 
-		$columns['auto-expass'] = esc_html__( 'Password Reset', 'auto-expire-passwords' );
+		$columns['user-expass'] = esc_html__( 'Password Reset', 'user-expire-passwords' );
 
 		return $columns;
 
@@ -83,24 +83,24 @@ final class Auto_Expire_Passwords_List_Table {
 	 */
 	public function render_users_column( $value, $column_name, $user_id ) {
 
-		if ( 'auto-expass' !== $column_name ) {
+		if ( 'user-expass' !== $column_name ) {
 
 			return $value;
 
 		}
 
 		if (
-			! Auto_Expire_Passwords::has_expirable_role( $user_id )
+			! Expire_User_Passwords::has_expirable_role( $user_id )
 			||
-			false === ( $reset = Auto_Expire_Passwords::get_user_meta( $user_id ) )
+			false === ( $reset = Expire_User_Passwords::get_user_meta( $user_id ) )
 		) {
 
 			return '&mdash;';
 
 		}
 
-		$time_diff = sprintf( __( '%1$s ago', 'auto-expire-passwords' ), human_time_diff( $reset, time() ) );
-		$class     = Auto_Expire_Passwords::is_expired( $user_id ) ? 'auto-expass-is-expired' : 'auto-expass-not-expired';
+		$time_diff = sprintf( __( '%1$s ago', 'expire-user-passwords' ), human_time_diff( $reset, time() ) );
+		$class     = Expire_User_Passwords::is_expired( $user_id ) ? 'user_expass-is-expired' : 'user-expass-not-expired';
 
 		return sprintf(
 			'<span class="%s">%s</span>',

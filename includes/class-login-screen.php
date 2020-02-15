@@ -1,5 +1,5 @@
 <?php
-namespace MillerMedia\AutoExpirePasswords;
+namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
 
@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-final class Auto_Expire_Passwords_Login_Screen {
+final class Expire_User_Passwords_Login_Screen {
 
 	/**
 	 * Class constructor.
@@ -30,13 +30,13 @@ final class Auto_Expire_Passwords_Login_Screen {
 	 */
 	public function wp_login( $user_login, $user ) {
 
-		if ( ! Auto_Expire_Passwords::get_user_meta( $user ) ) {
+		if ( ! Expire_User_Passwords::get_user_meta( $user ) ) {
 
-		 Auto_Expire_Passwords::save_user_meta( $user );
+		 Expire_User_Passwords::save_user_meta( $user );
 
 		}
 
-		if ( ! Auto_Expire_Passwords::is_expired( $user ) ) {
+		if ( ! Expire_User_Passwords::is_expired( $user ) ) {
 
 			return;
 
@@ -50,7 +50,7 @@ final class Auto_Expire_Passwords_Login_Screen {
 			add_query_arg(
 				array(
 					'action' => 'lostpassword',
-					'auto-expass' => 'expired',
+					'user-expass' => 'expired',
 				),
 				wp_login_url()
 			),
@@ -81,7 +81,7 @@ final class Auto_Expire_Passwords_Login_Screen {
 			||
 			$new_pass1 !== $new_pass2
 			||
-			! Auto_Expire_Passwords::has_expirable_role( $user )
+			! Expire_User_Passwords::has_expirable_role( $user )
 		) {
 
 			return;
@@ -110,7 +110,7 @@ final class Auto_Expire_Passwords_Login_Screen {
 	public function lost_password_message( $message ) {
 
 		$action = filter_input( INPUT_GET, 'action', FILTER_SANITIZE_STRING );
-		$status = filter_input( INPUT_GET, 'auto-expass', FILTER_SANITIZE_STRING );
+		$status = filter_input( INPUT_GET, 'user-expass', FILTER_SANITIZE_STRING );
 
 		if ( 'lostpassword' !== $action || 'expired' !== $status ) {
 
@@ -118,7 +118,7 @@ final class Auto_Expire_Passwords_Login_Screen {
 
 		}
 
-		$limit = Auto_Expire_Passwords::get_limit();
+		$limit = Expire_User_Passwords::get_limit();
 
 		return sprintf(
 			'<p id="login_error">%s</p><br><p>%s</p>',
@@ -127,11 +127,11 @@ final class Auto_Expire_Passwords_Login_Screen {
 					'Your password must be reset every day.',
 					'Your password must be reset every %d days.',
 					$limit,
-					'auto-expire-passwords'
+					'expire-user-passwords'
 				),
 				$limit
 			),
-			esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'auto-expire-passwords' )
+			esc_html__( 'Please enter your username or e-mail below and a password reset link will be sent to you.', 'expire-user-passwords' )
 		);
 
 	}

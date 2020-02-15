@@ -1,5 +1,5 @@
 <?php
-namespace MillerMedia\AutoExpirePasswords;
+namespace MillerMedia\ExpireUserPasswords;
 
 if ( ! defined( 'ABSPATH' ) ) {
 
@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 }
 
-final class Auto_Expire_Passwords_Settings {
+final class Expire_User_Passwords_Settings {
 
 	/**
 	 * Class constructor.
@@ -29,10 +29,10 @@ final class Auto_Expire_Passwords_Settings {
 
 		add_submenu_page(
 			'users.php',
-			esc_html__( 'Auto-Expire Passwords', 'auto-expire-passwords' ),
-			esc_html__( 'Auto-Expire Passwords', 'auto-expire-passwords' ),
+			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
+			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
 			'manage_options',
-			'auto_expire_passwords',
+			'Expire_User_passwords',
 			array( $this, 'render_submenu_page' )
 		);
 
@@ -48,14 +48,14 @@ final class Auto_Expire_Passwords_Settings {
 		?>
 		<div class="wrap">
 
-			<h2><?php esc_html_e( 'Auto-Expire Passwords', 'auto-expire-passwords' ) ?></h2>
+			<h2><?php esc_html_e( 'Expire User Passwords', 'expire-user-passwords' ) ?></h2>
 
 			<form method="post" action="options.php">
 				<?php
 
-				settings_fields( 'auto_expass_settings_page' );
+				settings_fields( 'user_expass_settings_page' );
 
-				do_settings_sections( 'auto_expass_settings_page' );
+				do_settings_sections( 'user_expass_settings_page' );
 
 				submit_button();
 
@@ -75,31 +75,31 @@ final class Auto_Expire_Passwords_Settings {
 	public function init() {
 
 		register_setting(
-			'auto_expass_settings_page',
-			'auto_expass_settings'
+			'user_expass_settings_page',
+			'user_expass_settings'
 		);
 
 		add_settings_section(
-			'auto_expass_settings_page_section',
+			'user_expass_settings_page_section',
 			null,
 			array( $this, 'render_section' ),
-			'auto_expass_settings_page'
+			'user_expass_settings_page'
 		);
 
 		add_settings_field(
-			'auto_expass_settings_field_limit',
-			esc_html__( 'Require password reset every', 'auto-expire-passwords' ),
+			'user_expass_settings_field_limit',
+			esc_html__( 'Require password reset every', 'expire-user-passwords' ),
 			array( $this, 'render_field_limit' ),
-			'auto_expass_settings_page',
-			'auto_expass_settings_page_section'
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
 		);
 
 		add_settings_field(
-			'auto_expass_settings_field_roles',
-			esc_html__( 'For users in these roles', 'auto-expire-passwords' ),
+			'user_expass_settings_field_roles',
+			esc_html__( 'For users in these roles', 'expire-user-passwords' ),
 			array( $this, 'render_field_roles' ),
-			'auto_expass_settings_page',
-			'auto_expass_settings_page_section'
+			'user_expass_settings_page',
+			'user_expass_settings_page_section'
 		);
 
 	}
@@ -113,7 +113,7 @@ final class Auto_Expire_Passwords_Settings {
 
 		printf(
 			'<p>%s</p>',
-			esc_html__( 'Require certain users to change their passwords on a regular basis.', 'auto-expire-passwords' )
+			esc_html__( 'Require certain users to change their passwords on a regular basis.', 'expire-user-passwords' )
 		);
 
 	}
@@ -125,14 +125,14 @@ final class Auto_Expire_Passwords_Settings {
 	 */
 	public function render_field_limit() {
 
-		$options = (array) get_option( 'auto_expass_settings', array() );
+		$options = (array) get_option( 'user_expass_settings', array() );
 		$value   = isset( $options['limit'] ) ? $options['limit'] : null;
 
 		printf(
-			'<input type="number" min="1" max="365" maxlength="3" name="auto_expass_settings[limit]" placeholder="%s" value="%s"> %s',
-			esc_attr( Auto_Expire_Passwords::$default_limit ),
+			'<input type="number" min="1" max="365" maxlength="3" name="user_expass_settings[limit]" placeholder="%s" value="%s"> %s',
+			esc_attr( Expire_User_Passwords::$default_limit ),
 			esc_attr( $value ),
-			esc_html__( 'days', 'auto-expire-passwords' )
+			esc_html__( 'days', 'expire-user-passwords' )
 		);
 
 	}
@@ -144,7 +144,7 @@ final class Auto_Expire_Passwords_Settings {
 	 */
 	public function render_field_roles() {
 
-		$options = (array) get_option( 'auto_expass_settings', array() );
+		$options = (array) get_option( 'user_expass_settings', array() );
 		$roles   = get_editable_roles();
 
 		foreach ( $roles as $role => $role_data ) {
@@ -153,7 +153,7 @@ final class Auto_Expire_Passwords_Settings {
 			$value = ( ! $options ) ? ( 'administrator' === $role ? 0 : 1 ) : ( empty( $options['roles'][ $name ] ) ? 0 : 1 );
 
 			printf(
-				'<p><input type="checkbox" name="auto_expass_settings[roles][%1$s]" id="auto_expass_settings[roles][%1$s]" %2$s value="1"><label for="auto_expass_settings[roles][%1$s]">%3$s</label></p>',
+				'<p><input type="checkbox" name="user_expass_settings[roles][%1$s]" id="user_expass_settings[roles][%1$s]" %2$s value="1"><label for="user_expass_settings[roles][%1$s]">%3$s</label></p>',
 				esc_attr( $name ),
 				checked( $value, 1, false ),
 				esc_html( $role_data['name'] )
@@ -176,23 +176,23 @@ final class Auto_Expire_Passwords_Settings {
 
 		$screen = get_current_screen();
 
-		if ( ! isset( $screen->id ) || 'users_page_auto_expire_passwords' !== $screen->id ) {
+		if ( ! isset( $screen->id ) || 'users_page_Expire_User_passwords' !== $screen->id ) {
 
 			return $text;
 
 		}
 
 		return sprintf(
-			__( 'Do you like the %1$s plugin? Please consider %2$s on %3$s', 'auto-expire-passwords' ),
-			esc_html__( 'Auto-Expire Passwords', 'auto-expire-passwords' ),
+			__( 'Do you like the %1$s plugin? Please consider %2$s on %3$s', 'user-expire-passwords' ),
+			esc_html__( 'Expire User Passwords', 'expire-user-passwords' ),
 			sprintf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( 'https://wordpress.org/support/view/plugin-reviews/auto-expire-passwords#postform' ),
-				__( 'leaving a &#9733;&#9733;&#9733;&#9733;&#9733; review', 'auto-expire-passwords' )
+				esc_url( 'https://wordpress.org/support/view/plugin-reviews/expire-user-passwords#postform' ),
+				__( 'leaving a &#9733;&#9733;&#9733;&#9733;&#9733; review', 'expire-user-passwords' )
 			),
 			sprintf(
 				'<a href="%s" target="_blank">WordPress.org</a>',
-				esc_url( 'https://wordpress.org/plugins/auto-expire-passwords/' )
+				esc_url( 'https://wordpress.org/plugins/expire-user-passwords/' )
 			)
 		);
 
