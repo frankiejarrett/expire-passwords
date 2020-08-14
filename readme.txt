@@ -2,8 +2,8 @@
 Contributors:      fjarrett, millermedianow, millermediadev
 Tags:              admin, login, membership, passwords, profile, security, users
 Requires at least: 4.0
-Tested up to:      5.3.2
-Stable tag:        1.1.0
+Tested up to:      5.5
+Stable tag:        1.1.1
 License:           GPL-2.0
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
