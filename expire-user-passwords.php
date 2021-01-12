@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Expire User Passwords
  * Description: Require certain users to change their passwords on a regular basis.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: Miller Media
  * Author URI: https://www.millermedia.io
  * License: GPL-2.0

@@ -7,8 +7,8 @@ Require certain users to change their passwords on a regular basis.
 **Contributors:** [fjarrett](https://profiles.wordpress.org/fjarrett), [millermedianow](https://profiles.wordpress.org/millermedianow), [millermediadev](https://profiles.wordpress.org/millermediadev)  
 **Tags:** [admin](https://wordpress.org/plugins/tags/admin), [login](https://wordpress.org/plugins/tags/login), [membership](https://wordpress.org/plugins/tags/membership), [passwords](https://wordpress.org/plugins/tags/passwords), [profile](https://wordpress.org/plugins/tags/profile), [security](https://wordpress.org/plugins/tags/security), [users](https://wordpress.org/plugins/tags/users)  
 **Requires at least:** 4.0  
-**Tested up to:** 5.5
-**Stable tag:** 1.1.1
+**Tested up to:** 5.6
+**Stable tag:** 1.1.2
 **License:** [GPL-2.0](https://www.gnu.org/licenses/gpl-2.0.html)  
 
 [![Build Status](https://travis-ci.org/fjarrett/expire-passwords.svg?branch=master)](https://travis-ci.org/fjarrett/expire-passwords) 
